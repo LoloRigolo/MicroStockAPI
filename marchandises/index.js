@@ -1,101 +1,90 @@
-const express = require("express");
+const express = require('express');
+const connectDB = require('./shared/init_mongodb');
+const Marchandise = require('./models/marchandise');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3012;
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+connectDB();
 
-  class Marchandise {
-    constructor(id,nom, prix, volume) {
-    this.id = id;
-        this.nom = nom;
-        this.prix = prix;
-        this.volume = volume;
+// Route GET pour récupérer toutes les marchandises
+app.get("/marchandises", async (req, res) => {
+    try {
+        const marchandises = await Marchandise.find();
+        res.json(marchandises);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des marchandises:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
     }
-}
-
-let marchandises = [
-    new Marchandise(0, "pomme", 1, 1),
-    new Marchandise(1, "peche", 2, 1)
-];
-
-
-app.get("/marchandises", (req, res) => {
-  res.json(marchandises);
 });
 
-app.get('/marchandises/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const marchandise = marchandises.find(u => u.id === id);
-
-  if (marchandise) {
-    res.json(marchandise);
-  
-  } else {
-    res.status(404).json({ message: 'Marchandises non trouvé' });
-  }
+// Route GET pour récupérer une marchandise par ID
+app.get('/marchandises/:id', async (req, res) => {
+    try {
+        const marchandise = await Marchandise.findById(req.params.id);
+        if (!marchandise) {
+            return res.status(404).json({ message: 'Marchandise non trouvée' });
+        }
+        res.json(marchandise);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la marchandise:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
 });
 
+// Route POST pour ajouter une nouvelle marchandise
+app.post('/marchandises', async (req, res) => {
+    const { nom, prix, volume } = req.body;
 
-app.post('/marchandises/add', (req, res) => {
-  const { id, nom, prix, volume } = req.body;
+    if (!nom || !prix || !volume) {
+        return res.status(400).json({ message: "Des informations sont manquantes" });
+    }
 
-  if (!id || !nom || !prix || !volume) {
-    return res.status(400).json({ message: "Des informations sont manquantes" });
-  }
-
-  const existingMarchandise = marchandises.find(u => u.id === id);
-
-  if (existingMarchandise) {
-    return res.status(400).json({ message: "Une marchandise avec cet ID existe déjà" });
-  }
-
-  const newMarchandise = new Marchandise(id, nom, prix, volume);
-  marchandises.push(newMarchandise);
-
-  res.status(201).json({ message: "Marchandise ajoutée avec succès", marchandise: newMarchandise });
+    try {
+        const newMarchandise = new Marchandise({ nom, prix, volume });
+        const savedMarchandise = await newMarchandise.save();
+        res.status(201).json({ message: "Marchandise ajoutée avec succès", marchandise: savedMarchandise });
+    } catch (error) {
+        console.error('Erreur lors de la création de la marchandise:', error);
+        res.status(400).json({ message: 'Erreur de création de la marchandise' });
+    }
 });
 
+// Route PUT pour mettre à jour une marchandise par ID
+app.put('/marchandises/:id', async (req, res) => {
+    const { nom, prix, volume } = req.body;
 
-app.put('/marchandises/:id', (req, res) => {
-  const { id }  = req.params;
-  const { nom, prix, volume } = req.body;
+    if (!nom || !prix || !volume) {
+        return res.status(400).json({ message: "Des informations sont manquantes" });
+    }
 
-  if (!nom || !prix || !volume) {
-    return res.status(400).json({ message: "Des informations sont manquantes" });
-  }
-
-  const existingMarchandise = marchandises.find(u => u.id === parseInt(id));
-
-  if (existingMarchandise) {
-    existingMarchandise.nom = nom;
-    existingMarchandise.prix = prix;
-    existingMarchandise.volume = volume;
-    return res.status(200).json({ message: "Marchandise mise à jour avec succès", marchandise: existingMarchandise });
-
-  } else {
-    return res.status(404).json({ message: "Marchandise non trouvée" });
-  }
-
+    try {
+        const updatedMarchandise = await Marchandise.findByIdAndUpdate(req.params.id, { nom, prix, volume }, { new: true });
+        if (!updatedMarchandise) {
+            return res.status(404).json({ message: "Marchandise non trouvée" });
+        }
+        res.json({ message: "Marchandise mise à jour avec succès", marchandise: updatedMarchandise });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour de la marchandise:', error);
+        res.status(400).json({ message: 'Erreur de mise à jour de la marchandise' });
+    }
 });
 
-app.delete('/marchandises/:id', (req, res) => {
-  const { id } = req.params;
-  const index = marchandises.findIndex(u => u.id === parseInt(id));
-  
-  if (index !== -1) {
-    const deletedMarchandise = marchandises.splice(index, 1);
-    return res.status(200).json({ message: "Marchandise supprimée avec succès", marchandise: deletedMarchandise[0] });
-
-  } else {
-    return res.status(404).json({ message: "Marchandise non trouvée" });
-  }
+// Route DELETE pour supprimer une marchandise par ID
+app.delete('/marchandises/:id', async (req, res) => {
+    try {
+        const deletedMarchandise = await Marchandise.findByIdAndDelete(req.params.id);
+        if (!deletedMarchandise) {
+            return res.status(404).json({ message: "Marchandise non trouvée" });
+        }
+        res.json({ message: "Marchandise supprimée avec succès", marchandise: deletedMarchandise });
+    } catch (error) {
+        console.error('Erreur lors de la suppression de la marchandise:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
 });
-    
 
 app.listen(port, () => {
-  console.log(`Application exemple à l'écoute sur le port ${port}!`);
+    console.log(`Service de marchandises est opérationnel sur http://localhost:${port}`);
 });
