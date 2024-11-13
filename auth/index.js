@@ -16,6 +16,28 @@ function hashPassword(password, salt) {
         .digest('hex');
 }
 
+function createToken(userId) {
+    const issuedAt = Date.now();
+    const expiresIn = issuedAt + 15 * 60 * 1000;
+    let nonce = 0;
+    let proofOfWork;
+
+    do {
+        proofOfWork = crypto.createHash('sha256')
+            .update(userId + nonce + issuedAt.toString())
+            .digest('hex');
+        nonce++;
+    } while (!proofOfWork.startsWith("000"));
+
+    return new Token({
+        userId,
+        issuedAt,
+        expiresIn,
+        nonce: nonce - 1,
+        proofOfWork
+    });
+}
+
 app.post("/auth/register", async (req, res) => {
     try {
         const { role, email, password } = req.body;
@@ -45,7 +67,7 @@ app.post("/auth/register", async (req, res) => {
 
 app.post("/auth/login", async (req, res) => {
     try {
-        const {email, password } = req.body;
+        const { email, password } = req.body;
 
         const user = await Auth.findOne({ email });
         if (!user) {
@@ -58,7 +80,19 @@ app.post("/auth/login", async (req, res) => {
             return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
         }
 
-        res.status(200).json({ message: 'Connexion réussie' });
+        const token = createToken(user._id);
+        await token.save();
+
+        res.status(200).json({
+            message: 'Connexion réussie',
+            token: {
+                userId: token.userId,
+                issuedAt: token.issuedAt,
+                expiresIn: token.expiresIn,
+                nonce: token.nonce,
+                proofOfWork: token.proofOfWork
+            }
+        });
     } catch (error) {
         console.error('Erreur lors de la connexion de l\'utilisateur:', error);
         res.status(500).json({ message: 'Erreur de connexion' });
