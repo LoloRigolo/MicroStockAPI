@@ -1,7 +1,7 @@
 const express = require('express');
 const connectDB = require('./shared/init_mongodb.js');
 const crypto = require('crypto');
-const Auth = require('./models/auth.js');
+const Auth = require('./models/user.js');
 const app = express();
 const port = process.env.PORT || 3010;
 
@@ -18,10 +18,10 @@ function hashPassword(password, salt) {
 
 app.post("/auth/register", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { role, email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ message: 'Email et mot de passe requis' });
+            return res.status(400).json({ message: 'Email et mot de passe requis ' });
         }
 
         const salt = crypto.randomBytes(16).toString('hex');
@@ -29,6 +29,7 @@ app.post("/auth/register", async (req, res) => {
         const hashedPassword = hashPassword(password, salt);
 
         const newUser = new Auth({
+            role,
             email,
             password: hashedPassword,
             salt: salt
@@ -44,7 +45,7 @@ app.post("/auth/register", async (req, res) => {
 
 app.post("/auth/login", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const {email, password } = req.body;
 
         const user = await Auth.findOne({ email });
         if (!user) {
