@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const tokenSchema = new mongoose.Schema({
     userId: { type: String, required: true },
-    role: { type: String, required: true },
+    role: { type: String, required: true},
     issuedAt: { type: Number, required: true },
     expiresIn: {type: Number, required: true},
     nonce: {type: Number, required: true},
