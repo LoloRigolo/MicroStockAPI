@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require('./shared/init_mongodb.js');
 const crypto = require('crypto');
 const Auth = require('./models/user.js');
+const Token = require('./models/token.js');
 const app = express();
 const port = process.env.PORT || 3010;
 
@@ -16,7 +17,7 @@ function hashPassword(password, salt) {
         .digest('hex');
 }
 
-function createToken(userId) {
+function createToken(userId, role) {
     const issuedAt = Date.now();
     const expiresIn = issuedAt + 15 * 60 * 1000;
     let nonce = 0;
@@ -31,6 +32,7 @@ function createToken(userId) {
 
     return new Token({
         userId,
+        role,
         issuedAt,
         expiresIn,
         nonce: nonce - 1,
@@ -80,13 +82,14 @@ app.post("/auth/login", async (req, res) => {
             return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
         }
 
-        const token = createToken(user._id);
+        const token = createToken(user._id, user.role);
         await token.save();
 
         res.status(200).json({
             message: 'Connexion réussie',
             token: {
                 userId: token.userId,
+                role : token.role,
                 issuedAt: token.issuedAt,
                 expiresIn: token.expiresIn,
                 nonce: token.nonce,
