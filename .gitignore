@@ -4,3 +4,4 @@ shared/.env
 magasin/.env
 auth/.env
 marchandises/.env
+stockage/.env
