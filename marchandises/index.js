@@ -35,14 +35,14 @@ app.get('/marchandises/:id', async (req, res) => {
 
 // Route POST pour ajouter une nouvelle marchandise
 app.post('/marchandises', async (req, res) => {
-    const { nom, prix, volume } = req.body;
+    const { nom, prix} = req.body;
 
-    if (!nom || !prix || !volume) {
+    if (!nom || !prix) {
         return res.status(400).json({ message: "Des informations sont manquantes" });
     }
 
     try {
-        const newMarchandise = new Marchandise({ nom, prix, volume });
+        const newMarchandise = new Marchandise({ nom, prix});
         const savedMarchandise = await newMarchandise.save();
         res.status(201).json({ message: "Marchandise ajoutée avec succès", marchandise: savedMarchandise });
     } catch (error) {
@@ -53,14 +53,14 @@ app.post('/marchandises', async (req, res) => {
 
 // Route PUT pour mettre à jour une marchandise par ID
 app.put('/marchandises/:id', async (req, res) => {
-    const { nom, prix, volume } = req.body;
+    const { nom, prix} = req.body;
 
-    if (!nom || !prix || !volume) {
+    if (!nom || !prix) {
         return res.status(400).json({ message: "Des informations sont manquantes" });
     }
 
     try {
-        const updatedMarchandise = await Marchandise.findByIdAndUpdate(req.params.id, { nom, prix, volume }, { new: true });
+        const updatedMarchandise = await Marchandise.findByIdAndUpdate(req.params.id, { nom, prix}, { new: true });
         if (!updatedMarchandise) {
             return res.status(404).json({ message: "Marchandise non trouvée" });
         }
