@@ -50,6 +50,58 @@ const getStockageById = async (req, res) => {
     }
 };
 
+const getStockageByIdMagasin = async (req, res) => {
+    const { id_magasin } = req.params;
+    try {
+        const stockage = await Stockage.find({ id_magasin });
+
+        if (!stockage || stockage.length === 0) {
+            return res.status(404).json({ message: 'Aucun stockage trouvé pour ce magasin' });
+        }
+
+        res.json(stockage);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des stockages:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+
+const getStockageByIdMarchandise = async (req, res) => {
+    const { id_marchandise } = req.params;
+
+    try {
+        const stockage = await Stockage.find({ id_marchandise });
+
+        if (!stockage || stockage.length === 0) {
+            return res.status(404).json({ message: 'Aucun stockage trouvé pour cette marchandise' });
+        }
+
+        res.json(stockage);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des stockages:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+
+const getStockageByIdMarchandiseAndIdMagasin = async (req, res) => {
+    const { id_marchandise, id_magasin } = req.params;
+    
+    try {
+        const stockage = await Stockage.find({ id_marchandise, id_magasin });
+
+        if (!stockage || stockage.length === 0) {
+            return res.status(404).json({ message: 'Aucun stockage trouvé pour cette marchandise et ce magasin' });
+        }
+
+        res.json(stockage);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des stockages:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
 const updatedStockage = async (req, res) => {
     try {
         const updatedStockage = await Stockage.findByIdAndUpdate(req.params.id, { id_magasin, id_marchandise, volume }, { new: true });
@@ -76,4 +128,4 @@ const deletedStockage = async (req, res) => {
     }
 };
 
-module.exports = { createStockage, getAllStockage, getStockageById, updatedStockage, deletedStockage };
+module.exports = { createStockage, getAllStockage, getStockageById, getStockageByIdMagasin, getStockageByIdMarchandise, getStockageByIdMarchandiseAndIdMagasin, updatedStockage, deletedStockage };
