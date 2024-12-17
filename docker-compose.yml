@@ -1,0 +1,60 @@
+services:
+  magasin:
+    container_name: magasin-micro-services
+    build:
+      context: ./magasin
+    volumes:
+      - ./magasin:/usr/src/magasin-app
+    ports:
+      - 3007:3007
+    networks:
+      - microservice
+  
+  marchandise:
+    container_name: marchandise-micro-services
+    build: 
+      context: ./marchandises
+    volumes:
+      - ./marchandises:/usr/src/marchandise-app
+    ports:
+      - 3012:3012
+    networks:
+      - microservice
+
+  stockage:
+    container_name: stockage-micro-services
+    build: 
+      context: ./stockage
+    volumes:
+      - ./stockage:/usr/src/stockage-app
+    ports:
+      - 3013:3013
+    networks:
+      - microservice
+
+  auth:
+    container_name: auth-micro-services
+    build: 
+      context: ./auth
+    volumes:
+      - ./auth:/usr/src/auth-app
+    ports:
+      - 3010:3010
+    networks:
+      - microservice
+
+  livraison:
+    container_name: livraison-micro-services
+    build: 
+      context: ./livraison
+    volumes:
+      - ./livraison:/usr/src/livraison-app
+    ports:
+      - 3014:3014
+    networks:
+      - microservice
+
+networks:
+  microservice:
+    driver: bridge
+    external: true

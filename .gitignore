@@ -1,2 +1,8 @@
 node_modules/
 package-lock.json
+shared/.env
+magasin/.env
+auth/.env
+marchandises/.env
+stockage/.env
+livraison/backend/.env
