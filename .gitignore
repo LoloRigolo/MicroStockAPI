@@ -5,3 +5,4 @@ magasin/.env
 auth/.env
 marchandises/.env
 stockage/.env
+livraison/backend/.env
