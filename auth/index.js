@@ -8,8 +8,9 @@ const port = process.env.PORT || 3010;
 app.use(express.json());
 connectDB();
 
-// Routes
 app.use('/auth', authRoutes);
+//app.use('/protected', protectedRoutes);
+
 
 app.listen(port, () => {
     console.log(`Serveur démarré sur le port ${port}`);

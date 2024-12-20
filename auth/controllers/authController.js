@@ -1,61 +1,93 @@
-const Auth = require('../models/user');
-const Token = require('../models/token');
+const { hashPassword } = require('../services/authService');
 const crypto = require('crypto');
-const { hashPassword, createToken } = require('../services/authService');
+const User = require('../models/user')
+const { createJWT } = require('../services/jwt');
+const { generateNonce } = require('../services/generateNonce');
+const Token = require('../models/token');
 
-const register = async (req, res) => {
-    try {
-        const { role, email, password } = req.body;
+const SECRET_KEY = process.env.SECRET_KEY;
 
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Email et mot de passe requis' });
-        }
 
-        const salt = crypto.randomBytes(16).toString('hex');
-        const hashedPassword = hashPassword(password, salt);
+const loginController = async (req, res) => {
+  const { username, password } = req.body;
 
-        const newUser = new Auth({ role, email, password: hashedPassword, salt });
-        const savedUser = await newUser.save();
-
-        res.status(201).json(savedUser);
-    } catch (error) {
-        console.error('Erreur lors de la création de l\'utilisateur:', error);
-        res.status(500).json({ message: 'Erreur de création de l\'utilisateur' });
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: 'Username ou mot de passe incorrect' });
     }
+
+    const hashedPassword = hashPassword(password, user.salt);
+    if (hashedPassword !== user.password) {
+      return res.status(400).json({ message: 'Username ou mot de passe incorrect' });
+    }
+
+    let existingToken = await Token.findOne({ userId: user._id });
+    const currentTime = Date.now();
+
+    if (existingToken) {
+      if (currentTime < existingToken.expiresIn) {
+        return res.status(200).json({ token: existingToken.token });
+      } else {
+        await Token.deleteOne({ userId: user._id });
+      }
+    }
+    const tokenPayload = {
+      userId: user._id.toString(),
+      role: user.role,
+      issuedAt: currentTime,
+      expiresIn: currentTime + 900 * 1000, // 15 minutes
+      nonce: 0,
+      proofOfWork: '',
+    };
+
+    const { nonce, proofOfWork } = generateNonce(tokenPayload);
+    tokenPayload.nonce = nonce;
+    tokenPayload.proofOfWork = proofOfWork;
+
+    const token = createJWT(tokenPayload, SECRET_KEY);
+
+    const newtoken = new Token(tokenPayload);
+    await newtoken.save();
+
+    return res.status(200).json({ token });
+  } catch (err) {
+
+    return res.status(500).json({ error: err.message });
+  }
 };
 
-const login = async (req, res) => {
+
+const registerController = async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Nom d’utilisateur et mot de passe requis' });
+    }
+    
     try {
-        const { email, password } = req.body;
-
-        const user = await Auth.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
-        }
-
-        const hashedPassword = hashPassword(password, user.salt);
-        if (hashedPassword !== user.password) {
-            return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
-        }
-
-        const token = createToken(user._id, user.role);
-        await token.save();
-
-        res.status(200).json({
-            message: 'Connexion réussie',
-            token: {
-                userId: token.userId,
-                role: token.role,
-                issuedAt: token.issuedAt,
-                expiresIn: token.expiresIn,
-                nonce: token.nonce,
-                proofOfWork: token.proofOfWork,
-            },
-        });
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Nom d’utilisateur déjà utilisé' });
+      }
+      
+      const salt = crypto.randomBytes(16).toString('hex');
+      const hashedPassword = hashPassword(password, salt);
+      
+      const newUser = new User({
+        username,
+        password: hashedPassword,
+        salt
+      });
+      
+      await newUser.save();
+      res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
     } catch (error) {
-        console.error('Erreur lors de la connexion de l\'utilisateur:', error);
-        res.status(500).json({ message: 'Erreur de connexion' });
+      res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 };
+  
+const protectedController = async( req, res ) => {
+  res.status(200).json({message: 'Bienvenue sur le tableau de bord !'});
+};
 
-module.exports = { register, login };
+module.exports = { loginController, registerController, protectedController };
