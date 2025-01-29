@@ -1,0 +1,12 @@
+const mongoose = require('mongoose');
+
+const transfertSchema = new mongoose.Schema({
+    id_magasin_source: { type: String, required: true },
+    id_magasin_dest: { type: String, required: true },
+    id_marchandise: { type: String, required: true },
+    volume: { type: Number, required: true }
+});
+
+const transfert = mongoose.model('transfert', transfertSchema);
+
+module.exports = transfert;
