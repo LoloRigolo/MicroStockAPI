@@ -9,46 +9,48 @@ const createTransfert = async (req, res) => {
     }
     
     try {
-        const magasinSourceExiste = await verifierExistance(`http://localhost:3007/magasins/${id_magasin_source}`);
-        const magasinDestExiste = await verifierExistance(`http://localhost:3007/magasins/${id_magasin_dest}`);
-        if (!magasinSourceExiste || magasinDestExiste) {
+        const magasinSourceExiste = await verifierExistance(`http://host.docker.internal:3007/magasins/${id_magasin_source}`);
+        const magasinDestExiste = await verifierExistance(`http://host.docker.internal:3007/magasins/${id_magasin_dest}`);
+        if (!magasinSourceExiste || !magasinDestExiste) {
             return res.status(404).json({ message: "un magasin n'existe pas" });
         }
-
-        const marchandiseExiste = await verifierExistance(`http://localhost:3012/marchandises/${id_marchandise}`);
+        console.log("------magasins OK------");
+        const marchandiseExiste = await verifierExistance(`http://host.docker.internal:3012/marchandises/${id_marchandise}`);
         if (!marchandiseExiste) {
             return res.status(404).json({ message: "La marchandise avec cet ID n'existe pas" });
         }
-        
-        const stockageSourceExiste = await verifierExistance(`http://localhost:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_source}`);
-        const stockageSourceSuffisant = await getVolume(`http://localhost:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_source}`);
+        const stockageSourceExiste = await verifierExistance(`http://host.docker.internal:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_source}`);
+        const stockageSourceSuffisant = await getVolume(`http://host.docker.internal:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_source}`);
         if (!stockageSourceExiste || volume > stockageSourceSuffisant) {
             return res.status(400).json({ message: "Stockage insuffisant ou inexistant avec cet ID" });
         }
-        const stockageDestExiste = await verifierExistance(`http://localhost:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_dest}`);
+        console.log("------marchandises dispo------")
+        const volumeUpdate = mettreAJourDonnees(``)
+        const stockageDestExiste = await verifierExistance(`http://host.docker.internal:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_dest}`);
         if (!stockageDestExiste) {
+            console.log("------Stockage dest indispo------")
             const dataStockageDest = {
                 id_magasin : `${id_magasin_dest}`,
                 id_marchandise : `${id_marchandise}`,
                 volume : `${volume}`
             }
-            envoyerDonnees(`http://localhost:3014/stockage`, dataStockageDest)
+            envoyerDonnees(`http://host.docker.internal:3014/stockage`, dataStockageDest)
                 .then((reponse) => {
                     console.log('Réponse du serveur :', reponse);
                 })
                 .catch((err) => {
                     console.error('Erreur :', err.message);
-                });
+                }); 
         }
         else {
-            const StockageDest = await getVolume(`http://localhost:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_dest}`);
-            const id_StockageDest = await getId(`http://localhost:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_dest}`);
+            const StockageDest = await getVolume(`http://host.docker.internal:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_dest}`);
+            const id_StockageDest = await getId(`http://host.docker.internal:3013/stockage/marchandise/${id_marchandise}/magasin/${id_magasin_dest}`);
             const dataStockageDest = {
                 id_magasin : `${id_magasin_dest}`,
                 id_marchandise : `${id_marchandise}`,
                 volume : `${volume + StockageDest}`
             }
-            mettreAJourDonnees(`http://localhost:3013/stockage/${id_StockageDest}`, dataStockageDest)
+            mettreAJourDonnees(`http://host.docker.internal:3013/stockage/${id_StockageDest}`, dataStockageDest)
                 .then((reponse) => {
                     console.log('Réponse du serveur :', reponse);
                 })

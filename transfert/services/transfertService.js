@@ -2,10 +2,12 @@ const http = require('http');
 const https = require('https');
 
 function verifierExistance(url) {
+    console.log(`verifexistance url : ${url}`)
     return new Promise(function (resolve, reject) {
         const lib = url.startsWith('https') ? https : http;
-
+        console.log("try")
         const req = lib.get(url, function (res) {
+            console.log(`status :${res.statusCode}`)
             if (res.statusCode === 200) {
                 resolve(true);
             } else if (res.statusCode === 404) {
@@ -25,6 +27,7 @@ function verifierExistance(url) {
 
 function getVolume(url) {
     return new Promise((resolve, reject) => {
+        console.log("------getVolume------")
         const lib = url.startsWith('https') ? https : http;
 
         const req = lib.get(url, (res) => {
@@ -37,6 +40,7 @@ function getVolume(url) {
             res.on('end', () => {
                 try {
                     const json = JSON.parse(data);
+                    console.log(data)
                     if (Array.isArray(json) && json.length > 0 && json[0].volume !== undefined) {
                         resolve(json[0].volume);
                     } else {
@@ -91,9 +95,11 @@ function getId(url) {
 
 function envoyerDonnees(url, donnees) {
     return new Promise((resolve, reject) => {
+        console.log("------creation donnee------");
         const lib = url.startsWith('https') ? https : http;
 
         const dataString = JSON.stringify(donnees);
+        console.log(dataString)
 
         const req = lib.request(url, {
             method: 'POST',

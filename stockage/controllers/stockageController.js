@@ -8,12 +8,12 @@ const createStockage = async (req, res) => {
         return res.status(400).json({ message: "Des informations sont manquantes" });
     }
     try {
-        const magasinExiste = await verifierExistance(`http://localhost:3007/magasins/${id_magasin}`);
+        const magasinExiste = await verifierExistance(`http://host.docker.internal:3007/magasins/${id_magasin}`);
         if (!magasinExiste) {
             return res.status(404).json({ message: "Le magasin avec cet ID n'existe pas" });
         }
 
-        const marchandiseExiste = await verifierExistance(`http://localhost:3012/marchandises/${id_marchandise}`);
+        const marchandiseExiste = await verifierExistance(`http://host.docker.internal:3012/marchandises/${id_marchandise}`);
         if (!marchandiseExiste) {
             return res.status(404).json({ message: "La marchandise avec cet ID n'existe pas" });
         }
