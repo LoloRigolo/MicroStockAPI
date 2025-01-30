@@ -14,4 +14,4 @@ livraisonRoutes.post('/', createRelay);
 livraisonRoutes.get('/', getAllRelay);
 livraisonRoutes.get('/:id', getRelayById);
 livraisonRoutes.put('/:id', updateRelay);
-livraisonRoutes.delete('/:id', deleteRelay);
+livraisonRoutes.delete('/delete/:id', deleteRelay);

@@ -53,7 +53,14 @@ services:
       - 3014:3014
     networks:
       - microservice
-
+  angular:
+    container_name: angular_livraison
+    build: 
+      context: ./livraison/frontend/livraison-frontend
+    volumes: 
+      - ./livraison/frontend/livraison-frontend:/usr/src/app
+    ports:
+      - 4200:4200 
 networks:
   microservice:
     driver: bridge

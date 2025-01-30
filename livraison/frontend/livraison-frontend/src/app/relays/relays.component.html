@@ -1,0 +1,8 @@
+<div class="container">
+    <div *ngFor="let relay of relayList" class="relay">
+        <h2>{{ relay.nom }}</h2>
+        <p>{{ relay.lat }}</p>
+        <p>{{ relay.lng }}</p>
+        <button class="remove-btn" (click)="deleteRelay(relay)">Supprimer</button>
+    </div>
+</div>
