@@ -1,0 +1,66 @@
+.post-form {
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #2c3e50; // Couleur sombre similaire au header
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #ecf0f1;
+  
+    h2 {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: #ecf0f1; // Titre clair
+      text-align: center;
+    }
+  
+    .form-group {
+      margin-bottom: 15px;
+  
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 1rem;
+        color: #bdc3c7; // Couleur secondaire
+      }
+  
+      input {
+        width: 97%;
+        padding: 10px;
+        border: 1px solid #34495e;
+        border-radius: 6px;
+        background-color: #34495e;
+        color: #ecf0f1;
+        font-size: 1rem;
+  
+        &:focus {
+          outline: none;
+          border-color: #1abc9c; // Couleur verte lors de la mise en focus
+          box-shadow: 0 0 4px rgba(26, 188, 156, 0.5);
+        }
+      }
+    }
+  
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      color: #ecf0f1;
+      background-color: #2980b9; // Bleu principal pour le bouton
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: #1abc9c; // Vert clair au survol
+      }
+  
+      &:disabled {
+        background-color: #7f8c8d; // Gris désactivé
+        cursor: not-allowed;
+      }
+    }
+  }
+  

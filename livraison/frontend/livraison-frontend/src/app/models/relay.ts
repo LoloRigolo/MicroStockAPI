@@ -1,6 +1,6 @@
 
 export interface Relay {
-	id?: number;
+	_id?: number;
 	nom: string;
 	lat: number;
     lng: number;

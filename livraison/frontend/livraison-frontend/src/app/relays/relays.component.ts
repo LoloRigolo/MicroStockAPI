@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Relay } from '../models/relay';
 import { RelaysService } from '../services/relays.service';
 import { NgFor } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-relays',
-  imports: [ NgFor ],
+  imports: [ NgFor, RouterLink ],
   templateUrl: './relays.component.html',
   styleUrls: ['./relays.component.scss']
 })
@@ -31,16 +32,13 @@ export class RelaysComponent implements OnInit {
   }
 
   deleteRelay(relay: Relay): void {
-    if (!relay.id) return; // Vérification si l'ID existe
-
-    this.relaysService.deleteRelay(relay.id).subscribe({
+    console.log(relay._id)
+    this.relaysService.deleteRelay(relay._id).subscribe({
       next: () => {
-        // Met à jour la liste sans recharger la page
-        this.relayList = this.relayList.filter(r => r.id !== relay.id);
+        window.location.reload();
       },
       error: () => {
-        console.error('Erreur lors de la suppression du relay');
+        console.error('Erreur lors du chargement des produits');
       }
-    });
-  }
+  })};
 }

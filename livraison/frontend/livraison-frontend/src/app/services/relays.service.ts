@@ -5,7 +5,7 @@ import { environment } from '../environments/environment.dev';
 import { Relay } from '../models/relay';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RelaysService {
 
@@ -21,7 +21,7 @@ export class RelaysService {
     return this.http.post<Relay>(this.apiUrl, relay);
   }
 
-  deleteRelay(relayId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${relayId}`);
+  deleteRelay(relayId?: number): Observable<Relay[]> {
+    return this.http.delete<Relay[]>(`${this.apiUrl}/delete/${relayId}`);
   }
 }
