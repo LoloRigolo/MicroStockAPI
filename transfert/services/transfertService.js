@@ -1,174 +1,194 @@
-const http = require('http');
-const https = require('https');
+const http = require("http");
+const https = require("https");
 
 function verifierExistance(url) {
-    console.log(`verifexistance url : ${url}`)
-    return new Promise(function (resolve, reject) {
-        const lib = url.startsWith('https') ? https : http;
-        console.log("try")
-        const req = lib.get(url, function (res) {
-            console.log(`status :${res.statusCode}`)
-            if (res.statusCode === 200) {
-                resolve(true);
-            } else if (res.statusCode === 404) {
-                resolve(false);
-            } else {
-                reject(new Error(`Erreur HTTP: ${res.statusCode}`));
-            }
-        });
-
-        req.on('error', function (err) {
-            reject(err);
-        });
-
-        req.end();
+  return new Promise(function (resolve, reject) {
+    const lib = url.startsWith("https") ? https : http;
+    const req = lib.get(url, function (res) {
+      if (res.statusCode === 200) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
     });
+
+    req.on("error", function (err) {
+      reject(err);
+    });
+
+    req.end();
+  });
 }
 
 function getVolume(url) {
-    return new Promise((resolve, reject) => {
-        console.log("------getVolume------")
-        const lib = url.startsWith('https') ? https : http;
+  return new Promise((resolve, reject) => {
+    const lib = url.startsWith("https") ? https : http;
 
-        const req = lib.get(url, (res) => {
-            let data = '';
+    const req = lib.get(url, (res) => {
+      let data = "";
 
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
 
-            res.on('end', () => {
-                try {
-                    const json = JSON.parse(data);
-                    console.log(data)
-                    if (Array.isArray(json) && json.length > 0 && json[0].volume !== undefined) {
-                        resolve(json[0].volume);
-                    } else {
-                        reject(new Error("Le champ 'volume' est introuvable dans la réponse."));
-                    }
-                } catch (err) {
-                    reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
-                }
-            });
-        });
-
-        req.on('error', (err) => {
-            reject(err);
-        });
-
-        req.end();
+      res.on("end", () => {
+        try {
+          const json = JSON.parse(data);
+          console.log(data);
+          if (
+            Array.isArray(json) &&
+            json.length > 0 &&
+            json[0].volume !== undefined
+          ) {
+            resolve(json[0].volume);
+          } else {
+            reject(
+              new Error("Le champ 'volume' est introuvable dans la réponse.")
+            );
+          }
+        } catch (err) {
+          reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
+        }
+      });
     });
+
+    req.on("error", (err) => {
+      reject(err);
+    });
+
+    req.end();
+  });
 }
 
 function getId(url) {
-    return new Promise((resolve, reject) => {
-        const lib = url.startsWith('https') ? https : http;
+  return new Promise((resolve, reject) => {
+    const lib = url.startsWith("https") ? https : http;
 
-        const req = lib.get(url, (res) => {
-            let data = '';
+    const req = lib.get(url, (res) => {
+      let data = "";
 
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
 
-            res.on('end', () => {
-                try {
-                    const json = JSON.parse(data);
-                    if (Array.isArray(json) && json.length > 0 && json[0]._id !== undefined) {
-                        resolve(json[0]._id);
-                    } else {
-                        reject(new Error("Le champ '_id' est introuvable dans la réponse."));
-                    }
-                } catch (err) {
-                    reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
-                }
-            });
-        });
-
-        req.on('error', (err) => {
-            reject(err);
-        });
-
-        req.end();
+      res.on("end", () => {
+        try {
+          const json = JSON.parse(data);
+          if (
+            Array.isArray(json) &&
+            json.length > 0 &&
+            json[0]._id !== undefined
+          ) {
+            resolve(json[0]._id);
+          } else {
+            reject(
+              new Error("Le champ '_id' est introuvable dans la réponse.")
+            );
+          }
+        } catch (err) {
+          reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
+        }
+      });
     });
+
+    req.on("error", (err) => {
+      reject(err);
+    });
+
+    req.end();
+  });
 }
 
 function envoyerDonnees(url, donnees) {
-    return new Promise((resolve, reject) => {
-        console.log("------creation donnee------");
-        const lib = url.startsWith('https') ? https : http;
+  return new Promise((resolve, reject) => {
+    const lib = url.startsWith("https") ? https : http;
 
-        const dataString = JSON.stringify(donnees);
-        console.log(dataString)
+    const dataString = JSON.stringify(donnees);
+    console.log(dataString);
 
-        const req = lib.request(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(dataString),
-            },
-        }, (res) => {
-            let data = '';
+    const req = lib.request(
+      url,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(dataString),
+        },
+      },
+      (res) => {
+        let data = "";
 
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
-
-            res.on('end', () => {
-                try {
-                    const json = JSON.parse(data);
-                    resolve(json);
-                } catch (err) {
-                    reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
-                }
-            });
+        res.on("data", (chunk) => {
+          data += chunk;
         });
 
-        req.on('error', (err) => {
-            reject(err);
+        res.on("end", () => {
+          try {
+            const json = JSON.parse(data);
+            resolve(json);
+          } catch (err) {
+            reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
+          }
         });
+      }
+    );
 
-        req.write(dataString);
-        req.end();
+    req.on("error", (err) => {
+      reject(err);
     });
+
+    req.write(dataString);
+    req.end();
+  });
 }
 
 function mettreAJourDonnees(url, donnees) {
-    return new Promise((resolve, reject) => {
-        const lib = url.startsWith('https') ? https : http;
+  return new Promise((resolve, reject) => {
+    const lib = url.startsWith("https") ? https : http;
 
-        const dataString = JSON.stringify(donnees);
+    const dataString = JSON.stringify(donnees);
+    console.log(dataString);
 
-        const req = lib.request(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(dataString),
-            },
-        }, (res) => {
-            let data = '';
+    const req = lib.request(
+      url,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(dataString),
+        },
+      },
+      (res) => {
+        let data = "";
 
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
-
-            res.on('end', () => {
-                try {
-                    const json = JSON.parse(data);
-                    resolve(json);
-                } catch (err) {
-                    reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
-                }
-            });
+        res.on("data", (chunk) => {
+          data += chunk;
         });
 
-        req.on('error', (err) => {
-            reject(err);
+        res.on("end", () => {
+          try {
+            const json = JSON.parse(data);
+            resolve(json);
+          } catch (err) {
+            reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
+          }
         });
+      }
+    );
 
-        req.write(dataString);
-        req.end();
+    req.on("error", (err) => {
+      reject(err);
     });
+
+    req.write(dataString);
+    req.end();
+  });
 }
 
-module.exports = { verifierExistance, getVolume, getId, envoyerDonnees, mettreAJourDonnees };
+module.exports = {
+  verifierExistance,
+  getVolume,
+  getId,
+  envoyerDonnees,
+  mettreAJourDonnees,
+};
