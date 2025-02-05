@@ -122,16 +122,15 @@ const getStockageByIdMarchandiseAndIdMagasin = async (req, res) => {
 const updatedStockage = async (req, res) => {
   const { id_magasin, id_marchandise, volume } = req.body;
 
-  if (!id_magasin || !id_marchandise || !volume) {
+  if (!id_magasin || !id_marchandise) {
     return res
       .status(400)
       .json({ message: "Des informations sont manquantes" });
   }
-
   try {
     const updatedStockage = await Stockage.findByIdAndUpdate(
       req.params.id,
-      { id_marchandise, id_marchandise, volume },
+      { id_magasin, id_marchandise, volume },
       { new: true }
     );
     if (!updatedStockage) {

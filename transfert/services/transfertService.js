@@ -1,192 +1,69 @@
-const http = require("http");
-const https = require("https");
+import axios from "axios";
 
-function verifierExistance(url) {
-  return new Promise(function (resolve, reject) {
-    const lib = url.startsWith("https") ? https : http;
-    const req = lib.get(url, function (res) {
-      if (res.statusCode === 200) {
-        resolve(true);
-      } else {
-        resolve(false);
-      }
-    });
-
-    req.on("error", function (err) {
-      reject(err);
-    });
-
-    req.end();
-  });
+async function verifierExistence(urls) {
+  const results = await Promise.all(
+    urls.map((url) =>
+      axios
+        .get(url)
+        .then((response) => (response.status === 200 ? null : response.status))
+        .catch((error) =>
+          error.response ? error.response.data : "Erreur réseau"
+        )
+    )
+  );
+  const erreurs = results.filter((res) => res !== null);
+  return erreurs.length === 0 ? true : erreurs;
 }
 
 function getVolume(url) {
-  return new Promise((resolve, reject) => {
-    const lib = url.startsWith("https") ? https : http;
+  return axios
+    .get(url)
+    .then((response) => {
+      const json = response.data;
 
-    const req = lib.get(url, (res) => {
-      let data = "";
-
-      res.on("data", (chunk) => {
-        data += chunk;
-      });
-
-      res.on("end", () => {
-        try {
-          const json = JSON.parse(data);
-          console.log(data);
-          if (
-            Array.isArray(json) &&
-            json.length > 0 &&
-            json[0].volume !== undefined
-          ) {
-            resolve(json[0].volume);
-          } else {
-            reject(
-              new Error("Le champ 'volume' est introuvable dans la réponse.")
-            );
-          }
-        } catch (err) {
-          reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
-        }
-      });
-    });
-
-    req.on("error", (err) => {
-      reject(err);
-    });
-
-    req.end();
-  });
+      if (
+        Array.isArray(json) &&
+        json.length > 0 &&
+        json[0].volume !== undefined
+      ) {
+        return json[0].volume;
+      } else {
+        throw new Error("Le champ 'volume' est introuvable dans la réponse.");
+      }
+    })
+    .catch((error) => (error.response ? error.response.data : "Erreur réseau"));
 }
 
 function getId(url) {
-  return new Promise((resolve, reject) => {
-    const lib = url.startsWith("https") ? https : http;
-
-    const req = lib.get(url, (res) => {
-      let data = "";
-
-      res.on("data", (chunk) => {
-        data += chunk;
-      });
-
-      res.on("end", () => {
-        try {
-          const json = JSON.parse(data);
-          if (
-            Array.isArray(json) &&
-            json.length > 0 &&
-            json[0]._id !== undefined
-          ) {
-            resolve(json[0]._id);
-          } else {
-            reject(
-              new Error("Le champ '_id' est introuvable dans la réponse.")
-            );
-          }
-        } catch (err) {
-          reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
-        }
-      });
-    });
-
-    req.on("error", (err) => {
-      reject(err);
-    });
-
-    req.end();
-  });
+  return axios
+    .get(url)
+    .then((response) => {
+      const json = response.data;
+      if (Array.isArray(json) && json.length > 0 && json[0]._id !== undefined) {
+        return json[0]._id;
+      } else {
+        throw new Error("Le champ '_id' est introuvable dans la réponse.");
+      }
+    })
+    .catch((error) => (error.response ? error.response.data : "Erreur réseau"));
 }
 
 function envoyerDonnees(url, donnees) {
-  return new Promise((resolve, reject) => {
-    const lib = url.startsWith("https") ? https : http;
-
-    const dataString = JSON.stringify(donnees);
-    console.log(dataString);
-
-    const req = lib.request(
-      url,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(dataString),
-        },
-      },
-      (res) => {
-        let data = "";
-
-        res.on("data", (chunk) => {
-          data += chunk;
-        });
-
-        res.on("end", () => {
-          try {
-            const json = JSON.parse(data);
-            resolve(json);
-          } catch (err) {
-            reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
-          }
-        });
-      }
-    );
-
-    req.on("error", (err) => {
-      reject(err);
-    });
-
-    req.write(dataString);
-    req.end();
-  });
+  return axios
+    .post(url, donnees)
+    .then((response) => response.data)
+    .catch((error) => (error.response ? error.response.data : "Erreur réseau"));
 }
 
 function mettreAJourDonnees(url, donnees) {
-  return new Promise((resolve, reject) => {
-    const lib = url.startsWith("https") ? https : http;
-
-    const dataString = JSON.stringify(donnees);
-    console.log(dataString);
-
-    const req = lib.request(
-      url,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(dataString),
-        },
-      },
-      (res) => {
-        let data = "";
-
-        res.on("data", (chunk) => {
-          data += chunk;
-        });
-
-        res.on("end", () => {
-          try {
-            const json = JSON.parse(data);
-            resolve(json);
-          } catch (err) {
-            reject(new Error("Erreur lors de l'analyse JSON : " + err.message));
-          }
-        });
-      }
-    );
-
-    req.on("error", (err) => {
-      reject(err);
-    });
-
-    req.write(dataString);
-    req.end();
-  });
+  return axios
+    .put(url, donnees)
+    .then((response) => response.data)
+    .catch((error) => (error.response ? error.response.data : "Erreur réseau"));
 }
 
-module.exports = {
-  verifierExistance,
+export {
+  verifierExistence,
   getVolume,
   getId,
   envoyerDonnees,
