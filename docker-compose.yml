@@ -31,6 +31,18 @@ services:
       - 3013:3013
     networks:
       - microservice
+  
+  transfert:
+    container_name: transfert-micro-services
+    build: 
+      context: ./transfert
+    volumes:
+      - ./transfert:/usr/src/transfert-app
+    ports:
+      - 3004:3004
+    networks:
+      - microservice
+
 
   auth:
     container_name: auth-micro-services
