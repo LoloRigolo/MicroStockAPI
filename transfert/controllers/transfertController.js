@@ -43,7 +43,6 @@ async function createTransfert(req, res) {
       id_marchandise: `${id_marchandise}`,
       volume: stockage_source_suffisant - volume,
     };
-    console.log("volume :" + data_volume_update.volume);
     await mettreAJourDonnees(
       `${process.env.STOCKAGE_URL}/${id_StockageSource}`,
       data_volume_update
