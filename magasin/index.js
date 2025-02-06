@@ -1,6 +1,6 @@
-const express = require('express');
-const connectDB = require('./shared/init_mongodb');
-const magasinRoutes = require('./routes/magasinRoutes');
+import express from "express";
+import { connectDB } from "./shared/init_mongodb.js";
+import { router } from "./routes/magasinRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 3007;
@@ -9,8 +9,8 @@ app.use(express.json());
 
 connectDB();
 
-app.use('/magasins', magasinRoutes);
+app.use("/magasins", router);
 
 app.listen(port, () => {
-    console.log(`Magasin micro-service is running on http://localhost:${port}`);
+  console.log(`Magasin micro-service is running on http://localhost:${port}`);
 });

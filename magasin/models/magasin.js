@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const magasinSchema = new mongoose.Schema({
-    nom: { type: String, required: true },
-    adresse: { type: String, required: true }
+  nom: { type: String, required: true },
+  adresse: { type: String, required: true },
 });
 
-const magasin = mongoose.model('magasin', magasinSchema);
+const Magasin = mongoose.model("magasin", magasinSchema);
 
-module.exports = magasin;
+export { Magasin };

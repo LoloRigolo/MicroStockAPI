@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const marchandiseSchema = new mongoose.Schema({
-    nom: { type: String, required: true, unique: true },
-    prix: { type: Number, required: true }
+  nom: { type: String, required: true, unique: true },
+  prix: { type: Number, required: true },
 });
 
-const marchandise = mongoose.model('marchandise', marchandiseSchema);
+const Marchandise = mongoose.model("marchandise", marchandiseSchema);
 
-module.exports = marchandise;
+export { Marchandise };

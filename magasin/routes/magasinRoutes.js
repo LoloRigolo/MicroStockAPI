@@ -1,18 +1,18 @@
-const express = require('express');
-const {
-    createMagasin,
-    getAllMagasins,
-    getMagasinById,
-    updateMagasin,
-    deleteMagasin,
-} = require('../controllers/magasinController');
+import express from "express";
+import {
+  createMagasin,
+  getAllMagasins,
+  getMagasinById,
+  updateMagasin,
+  deleteMagasin,
+} from "../controllers/magasinController.js";
 
 const router = express.Router();
 
-router.post('/', createMagasin);
-router.get('/', getAllMagasins);
-router.get('/:id', getMagasinById);
-router.put('/:id', updateMagasin);
-router.delete('/:id', deleteMagasin);
+router.post("/", createMagasin);
+router.get("/", getAllMagasins);
+router.get("/:id", getMagasinById);
+router.put("/:id", updateMagasin);
+router.delete("/:id", deleteMagasin);
 
-module.exports = router;
+export { router };
