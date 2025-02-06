@@ -2,17 +2,26 @@ import axios from "axios";
 
 async function verifierExistence(urls) {
   const results = await Promise.all(
-    urls.map((url) =>
-      axios
-        .get(url)
-        .then((response) => (response.status === 200 ? null : response.status))
-        .catch((error) =>
-          error.response ? error.response.data : "Erreur réseau"
-        )
-    )
+    urls.map(async (url) => {
+      try {
+        const response = await axios.get(url);
+        return { url, status: response.status, error: null };
+      } catch (error) {
+        return {
+          url,
+          status: error.response ? error.response.status : null,
+          error: error.response ? error.response.data : "Erreur réseau",
+        };
+      }
+    })
   );
-  const erreurs = results.filter((res) => res !== null);
-  return erreurs.length === 0 ? true : erreurs;
+
+  const erreurs = results.filter((res) => res.error !== null);
+
+  return {
+    success: erreurs.length === 0,
+    errors: erreurs.length > 0 ? erreurs : null,
+  };
 }
 
 function getVolume(url) {
