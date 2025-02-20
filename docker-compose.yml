@@ -43,6 +43,17 @@ services:
     networks:
       - microservice
 
+  angular:
+    container_name: angular-app
+    build:
+      context: ./frontend
+    ports:
+      - 4200:4200
+    volumes:
+      - ./frontend:/usr/src/app
+    networks:
+      - microservice
+
 networks:
   microservice:
     driver: bridge
