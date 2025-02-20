@@ -2,9 +2,9 @@ services:
   magasin:
     container_name: magasin-micro-services
     build:
-      context: ./magasin
+      context: ./backend/magasin
     volumes:
-      - ./magasin:/usr/src/magasin-app
+      - ./backend/magasin:/usr/src/magasin-app
     ports:
       - 3007:3007
     networks:
@@ -13,9 +13,9 @@ services:
   marchandise:
     container_name: marchandise-micro-services
     build: 
-      context: ./marchandises
+      context: ./backend/marchandises
     volumes:
-      - ./marchandises:/usr/src/marchandise-app
+      - ./backend/marchandises:/usr/src/marchandise-app
     ports:
       - 3012:3012
     networks:
@@ -24,9 +24,9 @@ services:
   stockage:
     container_name: stockage-micro-services
     build: 
-      context: ./stockage
+      context: ./backend/stockage
     volumes:
-      - ./stockage:/usr/src/stockage-app
+      - ./backend/stockage:/usr/src/stockage-app
     ports:
       - 3013:3013
     networks:
@@ -35,9 +35,9 @@ services:
   auth:
     container_name: auth-micro-services
     build: 
-      context: ./auth
+      context: ./backend/auth
     volumes:
-      - ./auth:/usr/src/auth-app
+      - ./backend/auth:/usr/src/auth-app
     ports:
       - 3010:3010
     networks:
