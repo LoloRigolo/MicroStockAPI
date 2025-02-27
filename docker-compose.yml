@@ -9,10 +9,10 @@ services:
       - 3007:3007
     networks:
       - microservice
-  
+
   marchandise:
     container_name: marchandise-micro-services
-    build: 
+    build:
       context: ./marchandises
     volumes:
       - ./marchandises:/usr/src/marchandise-app
@@ -23,7 +23,7 @@ services:
 
   stockage:
     container_name: stockage-micro-services
-    build: 
+    build:
       context: ./stockage
     volumes:
       - ./stockage:/usr/src/stockage-app
@@ -34,12 +34,23 @@ services:
 
   auth:
     container_name: auth-micro-services
-    build: 
+    build:
       context: ./auth
     volumes:
       - ./auth:/usr/src/auth-app
     ports:
       - 3010:3010
+    networks:
+      - microservice
+
+  vente:
+    container_name: vente-micro-services
+    build:
+      context: ./vente
+    volumes:
+      - ./vente:/usr/src/vente-app
+    ports:
+      - 3015:3015
     networks:
       - microservice
 
