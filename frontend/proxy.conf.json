@@ -1,0 +1,7 @@
+{
+  "/marchandises": {
+    "target": "http://localhost:3012",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

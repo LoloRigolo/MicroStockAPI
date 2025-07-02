@@ -6,10 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = 'http://localhost:3010/auth';
 
   constructor(private http: HttpClient) {}
 
-  loginQuick(username: string, password: string): Observable<any> {
-    return this.http.get(`http://localhost:3010/auth/login/${username}/${password}`);
+  login(credentials: { username: string; password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, credentials);
   }
 }

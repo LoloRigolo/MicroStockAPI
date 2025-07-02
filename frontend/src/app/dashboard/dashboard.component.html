@@ -1,1 +1,22 @@
-<h1>Bienvenue sur le dashboard</h1>
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-4">Liste des marchandises</h1>
+
+  <div *ngIf="error" class="text-red-600 mb-6">
+    {{ error }}
+  </div>
+
+  <table class="min-w-full bg-white">
+    <thead>
+      <tr>
+        <th class="px-4 py-2 border">Nom</th>
+        <th class="px-4 py-2 border">Prix</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of marchandises">
+        <td class="px-4 py-2 border">{{ m.nom }}</td>
+        <td class="px-4 py-2 border">{{ m.prix | currency:'EUR' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
