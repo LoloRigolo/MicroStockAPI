@@ -1,7 +1,7 @@
 FROM node:alpine
 
-WORKDIR /usr/src/panier-app
+WORKDIR /usr/src/commande-app
 
-EXPOSE 3020
+EXPOSE 3021
 
 ENTRYPOINT [ "node", "index.js" ]

@@ -6,3 +6,4 @@ auth/.env
 marchandises/.env
 stockage/.env
 panier/.env
+commande/.env
