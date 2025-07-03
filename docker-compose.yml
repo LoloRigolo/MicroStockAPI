@@ -54,6 +54,17 @@ services:
     networks:
       - microservice
 
+  commande:
+    container_name: commande-micro-services
+    build:
+      context: ./backend/commande
+    volumes:
+      - ./backend/commande:/usr/src/commande-app
+    ports:
+      - 3021:3021
+    networks:
+      - microservice
+
   angular:
     container_name: angular-app
     build:
