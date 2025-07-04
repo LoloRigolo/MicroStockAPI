@@ -19,4 +19,13 @@
       </tr>
     </tbody>
   </table>
+  <form (submit)="addProduit()">
+  <input type="text" placeholder="Nom" [(ngModel)]="newProduit.nom" name="nom" required />
+  <input type="number" placeholder="Prix" [(ngModel)]="newProduit.prix" name="prix" required />
+  <button type="submit">Ajouter</button>
+</form>
+  <button (click)="onLogout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+  Logout
+</button>
+
 </div>
