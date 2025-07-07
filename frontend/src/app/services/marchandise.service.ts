@@ -18,7 +18,8 @@ export class MarchandiseService {
   getAllMarchandises(): Observable<Marchandise[]> {
     return this.http.get<Marchandise[]>(this.apiUrl);
   }
+
   createProduit(produit: { nom: string, prix: number }): Observable<any> {
-  return this.http.post('http://localhost:3012/marchandises', produit);
-}
+    return this.http.post(this.apiUrl, produit);
+  }
 }

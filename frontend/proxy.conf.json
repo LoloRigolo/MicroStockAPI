@@ -8,5 +8,11 @@
     "target": "http://localhost:3010",
     "secure": false,
     "changeOrigin": true
+  },    
+  "/panier": {
+    "target": "http://localhost:3020",
+    "secure": false,
+    "changeOrigin": true
   }
+
 }
