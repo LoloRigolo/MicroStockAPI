@@ -3,5 +3,10 @@
     "target": "http://localhost:3012",
     "secure": false,
     "changeOrigin": true
+  },
+  "/auth": {
+    "target": "http://localhost:3010",
+    "secure": false,
+    "changeOrigin": true
   }
 }

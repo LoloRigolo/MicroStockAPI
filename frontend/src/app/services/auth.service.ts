@@ -4,10 +4,10 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3010/auth';
+  apiUrl = 'http://localhost:3010/auth';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -16,7 +16,11 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token'); // Ou autre mécanisme de stockage
-    this.router.navigate(['/login']); // Redirige vers la page login après logout
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
+  }
+
+  register(data: any) {
+    return this.http.post(`${this.apiUrl}/register`, data);
   }
 }
