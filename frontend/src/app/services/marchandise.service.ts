@@ -3,8 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Marchandise {
+  _id?: string;
   nom: string;
   prix: number;
+  quantite?: number;
 }
 
 @Injectable({

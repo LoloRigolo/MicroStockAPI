@@ -8,11 +8,39 @@ const createPanier = async (req, res) => {
       return res.status(400).json({ message: "Données invalides" });
     }
 
-    const newPanier = new Panier({ user_id, articles });
-    await newPanier.save();
+    const article = articles[0];
 
-    res.status(201).json(newPanier);
+    if (!article.article_id || !article.nom || article.prix == null || article.quantite == null) {
+      return res.status(400).json({ message: "Article incomplet" });
+    }
+
+    let panier = await Panier.findOne({ user_id });
+
+    if (!panier) {
+      panier = new Panier({
+        user_id,
+        articles: [article],
+      });
+      await panier.save();
+      return res.status(201).json(panier);
+    }
+
+    const existingArticle = panier.articles.find(
+      (a) => a.article_id === article.article_id
+    );
+
+    if (existingArticle) {
+      existingArticle.quantite += article.quantite;
+    } else {
+      panier.articles.push(article);
+    }
+
+    await panier.save();
+
+    return res.status(200).json(panier);
+
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 };
@@ -80,12 +108,16 @@ const deletePanier = async (req, res) => {
 const getPaniersByUserId = async (req, res) => {
   try {
     const { user_id } = req.params;
-    const paniers = await Panier.find({ user_id });
+    let paniers = await Panier.find({ user_id });
 
     if (!paniers || paniers.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "Aucun panier trouvé pour cet utilisateur" });
+      const newPanier = new Panier({
+        user_id,
+        articles: [],
+      });
+      await newPanier.save();
+
+      return res.status(200).json([newPanier]);
     }
 
     res.status(200).json(paniers);
@@ -93,6 +125,7 @@ const getPaniersByUserId = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 };
+
 
 module.exports = {
   createPanier,
