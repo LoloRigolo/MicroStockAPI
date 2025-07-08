@@ -16,7 +16,7 @@ import {jwtDecode} from 'jwt-decode';
     CommonModule,
     FormsModule,
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
   ],
 })
 export class DashboardUserComponent implements OnInit {
@@ -51,15 +51,15 @@ export class DashboardUserComponent implements OnInit {
 
   addProduit() {
     this.marchandiseService.createProduit(this.newProduit).subscribe({
-      next: () => {
-        this.loadMarchandises();
-        this.newProduit = { nom: '', prix: 0 };
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = 'Erreur lors de l’ajout de la marchandise.';
-      }
-    });
+  next: () => {
+    this.loadMarchandises();
+    this.newProduit = { nom: '', prix: 0 };
+  },
+  error: (err) => {
+    console.error(err);
+    this.error = 'Erreur lors de l’ajout de la marchandise.';
+  }
+});
   }
 
   loadMarchandises() {

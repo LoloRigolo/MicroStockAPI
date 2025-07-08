@@ -75,6 +75,17 @@ services:
       - ./frontend:/usr/src/app
     networks:
       - microservice
+  
+  stockage-images:
+    container_name: stockage-images-micro-services
+    build:
+      context: ./backend/stockage-images
+    volumes:
+      - ./backend/stockage-images/uploads:/usr/src/stockage-images-app/uploads
+    ports:
+      - 3015:3015
+    networks:
+      - microservice
 
 networks:
   microservice:

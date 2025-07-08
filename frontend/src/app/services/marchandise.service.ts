@@ -7,6 +7,7 @@ export interface Marchandise {
   nom: string;
   prix: number;
   quantite?: number;
+  imageUrl?: string;
 }
 
 @Injectable({
@@ -21,7 +22,12 @@ export class MarchandiseService {
     return this.http.get<Marchandise[]>(this.apiUrl);
   }
 
-  createProduit(produit: { nom: string, prix: number }): Observable<any> {
-    return this.http.post(this.apiUrl, produit);
+  createProduitWithImage(formData: FormData) {
+    return this.http.post<any>(this.apiUrl, formData);
   }
+
+  // Pour DashboardUserComponent
+  createProduit(produit: { nom: string; prix: number; imageUrl?: string }) {
+  return this.http.post<any>('/marchandises', produit);
+}
 }
