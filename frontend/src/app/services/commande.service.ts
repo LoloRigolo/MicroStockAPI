@@ -14,7 +14,13 @@ export class CommandeService {
     return this.http.post<any>(`${this.apiUrl}/from-panier/${id_panier}`, {});
   }
 
+
+
   getCommandesByUser(user_id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/user/${user_id}`);
+  }
+
+  getCommandeById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 }

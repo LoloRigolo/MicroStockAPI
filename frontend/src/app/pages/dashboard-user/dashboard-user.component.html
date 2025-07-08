@@ -15,6 +15,14 @@
       <span>Voir le panier</span>
     </button>
   </div>
+  <div class="flex justify-center mt-8">
+  <button
+    class="bg-purple-600 text-white font-bold px-6 py-3 rounded hover:bg-purple-700 transition"
+    (click)="goToCommandes()"
+  >
+    Voir mes commandes
+  </button>
+</div>
 
   <div *ngIf="error" class="text-red-600 font-semibold mb-6">
     {{ error }}

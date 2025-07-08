@@ -148,7 +148,9 @@ addToPanier(marchandise: Marchandise, quantite: number) {
 navigateToPanier() {
   this.router.navigate(['/panier']);
 }
-
+goToCommandes() {
+  this.router.navigate(['/commandes']);
+}
 
   onLogout() {
     this.router.navigate(['/login']);

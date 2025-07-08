@@ -41,5 +41,16 @@ export const routes: Routes = [
     path: 'panier',
     loadComponent: () =>
       import('./pages/panier/panier.component').then((m) => m.PanierComponent),
+  },
+  {
+    path: 'commandes',
+    loadComponent: () =>
+      import('./pages/commandes/commandes.component').then((m) => m.CommandesComponent),
+  }
+  ,
+  {
+    path: 'commandes/:id',
+    loadComponent: () =>
+      import('./pages/commandes-details/commandes-detail/commandes-detail.component').then((m) => m.CommendesDetailsComponent),
   }
 ];
