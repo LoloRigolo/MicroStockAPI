@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const articleCommandeSchema = new mongoose.Schema({
   article_id: { type: String, required: true },
+  nom: { type: String, required: true },
+  prix: { type: Number, required: true },
   quantite: { type: Number, required: true },
 });
 

@@ -6,7 +6,7 @@ const createCommandeFromPanier = async (req, res) => {
 
   try {
     const panierRes = await axios.get(
-      `http://panier-service/api/paniers/${id_panier}`
+      `http://panier-micro-services:3020/panier/${id_panier}`
     );
     const panier = panierRes.data;
 
@@ -14,17 +14,39 @@ const createCommandeFromPanier = async (req, res) => {
       return res.status(400).json({ message: "Panier vide ou inexistant" });
     }
 
+    const marchRes = await axios.get(
+      "http://marchandise-micro-services:3012/marchandises"
+    );
+    const marchandises = marchRes.data;
+
+    const articlesEnrichis = panier.articles.map((art) => {
+      const march = marchandises.find(
+        (m) => m._id === art.article_id
+      );
+
+      return {
+        article_id: art.article_id,
+        nom: march?.nom || "Inconnu",
+        prix: march?.prix || 0,
+        quantite: art.quantite
+      };
+    });
+
     const commande = new Commande({
       user_id: panier.user_id,
-      articles: panier.articles,
+      articles: articlesEnrichis,
       status: "en_attente",
     });
 
     await commande.save();
-    await axios.delete(`http://panier-service/api/paniers/${id_panier}`);
+
+    await axios.delete(
+      `http://panier-micro-services:3020/panier/${id_panier}`
+    );
 
     res.status(201).json({ message: "Commande créée", commande });
   } catch (err) {
+    console.error("❌ ERREUR createCommandeFromPanier:", err);
     res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 };

@@ -13,6 +13,10 @@
     "target": "http://localhost:3020",
     "secure": false,
     "changeOrigin": true
-  }
-
+  },
+"/commandes": {
+  "target": "http://localhost:3021",
+  "secure": false,
+  "changeOrigin": true
+}
 }

@@ -37,4 +37,9 @@ export const routes: Routes = [
         (m) => m.DashboardAdminComponent
       ),
   },
+  {
+    path: 'panier',
+    loadComponent: () =>
+      import('./pages/panier/panier.component').then((m) => m.PanierComponent),
+  }
 ];

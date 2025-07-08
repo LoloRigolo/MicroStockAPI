@@ -1,7 +1,20 @@
 <div class="max-w-5xl mx-auto p-6">
-  <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">
-    🛒 Liste des marchandises
-  </h1>
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">
+      🛒 Liste des marchandises
+    </h1>
+    <button
+      routerLink="/panier"
+      class="flex items-center space-x-2 bg-green-500 text-white font-semibold px-4 py-2 rounded hover:bg-green-600 transition"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m13-9l2 9M10 21h4" />
+      </svg>
+      <span>Voir le panier</span>
+    </button>
+  </div>
 
   <div *ngIf="error" class="text-red-600 font-semibold mb-6">
     {{ error }}
@@ -35,11 +48,11 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <input
-  type="number"
-  [(ngModel)]="m.quantite"
-  min="1"
-/>
-
+              type="number"
+              [(ngModel)]="m.quantite"
+              min="1"
+              class="border border-gray-300 rounded px-2 py-1 w-20"
+            />
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <button

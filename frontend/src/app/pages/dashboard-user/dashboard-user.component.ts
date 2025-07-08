@@ -145,6 +145,9 @@ addToPanier(marchandise: Marchandise, quantite: number) {
   });
 }
 
+navigateToPanier() {
+  this.router.navigate(['/panier']);
+}
 
 
   onLogout() {
