@@ -18,10 +18,8 @@ export class PanierComponent implements OnInit {
   userId = '';
   panierArticles: any[] = [];
   error = '';
-  articles: any[] = [];
   marchandises: Marchandise[] = [];
   panierId: string = '';
-  currentPanierId = '';
 
   constructor(
     private panierService: PanierService,
@@ -35,7 +33,7 @@ export class PanierComponent implements OnInit {
     if (token) {
       const decoded: any = jwtDecode(token);
       this.userId = decoded.userId;
-      console.log('userId récupéré du token :', this.userId);
+      console.log('✅ userId récupéré du token :', this.userId);
     }
 
     this.loadPanier();
@@ -80,6 +78,55 @@ export class PanierComponent implements OnInit {
     });
   }
 
+  increaseQuantity(article: any) {
+    article.quantite += 1;
+    this.updatePanier();
+  }
+
+  decreaseQuantity(article: any) {
+    if (article.quantite > 1) {
+      article.quantite -= 1;
+      this.updatePanier();
+    } else {
+      this.removeArticle(article);
+    }
+  }
+
+  removeArticle(article: any) {
+    this.panierArticles = this.panierArticles.filter(
+      (a) => a.article_id !== article.article_id
+    );
+    this.updatePanier();
+  }
+
+  emptyPanier() {
+    this.panierArticles = [];
+    this.updatePanier();
+  }
+
+  updatePanier() {
+    if (!this.panierId) {
+      console.error("Panier introuvable");
+      return;
+    }
+
+    const updatedArticles = this.panierArticles.map((a) => ({
+      article_id: a.article_id,
+      quantite: a.quantite,
+    }));
+
+    this.panierService.updatePanier(this.panierId, updatedArticles)
+      .subscribe({
+        next: () => {
+          console.log("✅ Panier mis à jour en base !");
+        },
+        error: (err) => {
+          console.error(err);
+          this.error = "Erreur lors de la mise à jour du panier.";
+        }
+      });
+  }
+
   validatePanier() {
     if (!this.panierId) {
       alert('Panier introuvable.');
@@ -88,7 +135,7 @@ export class PanierComponent implements OnInit {
 
     this.commandeService.createCommandeFromPanier(this.panierId).subscribe({
       next: (res) => {
-        console.log('Commande créée : ', res);
+        console.log('✅ Commande créée : ', res);
         alert('Commande validée !');
         this.router.navigate(['/dashboard-user']);
       },
@@ -98,79 +145,6 @@ export class PanierComponent implements OnInit {
       }
     });
   }
-
-  increaseQuantity(article: any) {
-  article.quantite += 1;
-  this.updateArticle(article);
-}
-
-decreaseQuantity(article: any) {
-  if (article.quantite > 1) {
-    article.quantite -= 1;
-    this.updateArticle(article);
-  } else {
-    this.removeArticle(article);
-  }
-}
-
-removeArticle(article: any) {
-  if (!this.currentPanierId) return;
-
-  this.articles = this.articles.filter(a => a !== article);
-
-  const updatedArticles = this.articles.map(a => ({
-    article_id: a.article_id,
-    nom: a.nom,
-    prix: a.prix,
-    quantite: a.quantite
-  }));
-
-  this.panierService.updatePanier(this.currentPanierId, updatedArticles)
-    .subscribe({
-      next: () => {
-        console.log("Article supprimé du panier");
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
-}
-
-emptyPanier() {
-  if (!this.currentPanierId) return;
-
-  this.panierService.updatePanier(this.currentPanierId, []).subscribe({
-    next: () => {
-      console.log("Panier vidé");
-      this.articles = [];
-    },
-    error: (err) => {
-      console.error(err);
-    }
-  });
-}
-
-updateArticle(article: any) {
-  if (!this.currentPanierId) return;
-
-  const updatedArticles = this.articles.map(a => ({
-    article_id: a.article_id,
-    nom: a.nom,
-    prix: a.prix,
-    quantite: a.quantite
-  }));
-
-  this.panierService.updatePanier(this.currentPanierId, updatedArticles)
-    .subscribe({
-      next: () => {
-        console.log("Quantité mise à jour");
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
-}
-
 
   retourDashboard() {
     this.router.navigate(['/dashboard-user']);

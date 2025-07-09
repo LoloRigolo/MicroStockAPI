@@ -28,5 +28,11 @@
     "target": "http://localhost:3015",
     "secure": false,
     "changeOrigin": true
+  },
+  "/stockage": {
+    "target": "http://localhost:3013",
+    "secure": false,
+    "changeOrigin": true
   }
+
 }
