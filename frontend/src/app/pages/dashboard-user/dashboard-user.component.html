@@ -15,14 +15,15 @@
       <span>Voir le panier</span>
     </button>
   </div>
+
   <div class="flex justify-center mt-8">
-  <button
-    class="bg-purple-600 text-white font-bold px-6 py-3 rounded hover:bg-purple-700 transition"
-    (click)="goToCommandes()"
-  >
-    Voir mes commandes
-  </button>
-</div>
+    <button
+      class="bg-purple-600 text-white font-bold px-6 py-3 rounded hover:bg-purple-700 transition"
+      (click)="goToCommandes()"
+    >
+      Voir mes commandes
+    </button>
+  </div>
 
   <div *ngIf="error" class="text-red-600 font-semibold mb-6">
     {{ error }}
@@ -57,14 +58,14 @@
           <td class="px-6 py-4 whitespace-nowrap">
             <input
               type="number"
-              [(ngModel)]="m.quantite"
               min="1"
+              [(ngModel)]="quantites[m._id]"
               class="border border-gray-300 rounded px-2 py-1 w-20"
             />
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <button
-              (click)="addToPanier(m, m.quantite || 1)"
+              (click)="addToPanier(m, quantites[m._id] || 1)"
               class="bg-blue-600 text-white font-semibold px-4 py-2 rounded hover:bg-blue-700 transition"
             >
               Ajouter au panier

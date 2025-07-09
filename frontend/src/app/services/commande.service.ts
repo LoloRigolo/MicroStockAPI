@@ -10,17 +10,25 @@ export class CommandeService {
 
   constructor(private http: HttpClient) {}
 
-  createCommandeFromPanier(id_panier: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/from-panier/${id_panier}`, {});
+   createCommandeFromPanier(panierId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/from-panier/${panierId}`, {});
   }
 
+ 
+ 
+  getAllCommandes(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
 
-
-  getCommandesByUser(user_id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/user/${user_id}`);
+  getCommandesByUser(user_id: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/user/${user_id}`);
   }
 
   getCommandeById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  updateCommandeStatus(id: string, status: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}/status`, { status });
   }
 }

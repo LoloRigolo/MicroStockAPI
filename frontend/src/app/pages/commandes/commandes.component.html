@@ -40,6 +40,19 @@
             Voir détail
           </button>
         </td>
+        <td class="px-4 py-2 border">
+  <button
+    class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
+    (click)="goToDetail(commande._id)">
+    Voir détail
+  </button>
+
+  <button
+    class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition ml-2"
+    (click)="downloadFacture(commande)">
+    Télécharger facture
+  </button>
+</td>
       </tr>
     </tbody>
   </table>

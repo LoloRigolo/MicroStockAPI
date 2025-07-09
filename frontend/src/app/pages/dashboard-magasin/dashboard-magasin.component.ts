@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Marchandise, MarchandiseService } from '../../services/marchandise.service';
 import { PanierService } from '../../services/panier.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StockageImagesService } from '../../services/stockage-images.service';
+import { CommandeService } from '../../services/commande.service';
 
 @Component({
   selector: 'app-dashboard-magasin',
@@ -19,23 +20,26 @@ import { StockageImagesService } from '../../services/stockage-images.service';
   templateUrl: './dashboard-magasin.component.html',
   styleUrls: ['./dashboard-magasin.component.scss']
 })
-export class DashboardMagasinComponent {
+export class DashboardMagasinComponent implements OnInit {
   marchandises: Marchandise[] = [];
   error = '';
   newProduit: { nom: string; prix: number } = { nom: '', prix: 0 };
 
   selectedImage: File | null = null;
   imagePreview: string | null = null;
+  commandes: any[] = [];
 
   constructor(
     private marchandiseService: MarchandiseService,
     private panierService: PanierService,
     private stockageImagesService: StockageImagesService,
+    private commandeService: CommandeService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadMarchandises();
+    this.loadCommandes();
   }
 
   loadMarchandises() {
@@ -46,6 +50,30 @@ export class DashboardMagasinComponent {
       error: (err) => {
         console.error(err);
         this.error = 'Erreur lors du chargement des marchandises.';
+      }
+    });
+  }
+
+  loadCommandes() {
+    this.commandeService.getAllCommandes().subscribe({
+      next: (res) => {
+        this.commandes = res;
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Erreur lors du chargement des commandes.';
+      }
+    });
+  }
+
+  updateStatus(commandeId: string, status: string) {
+    this.commandeService.updateCommandeStatus(commandeId, status).subscribe({
+      next: () => {
+        this.loadCommandes();
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Erreur lors de la mise à jour du statut.';
       }
     });
   }
@@ -61,7 +89,9 @@ export class DashboardMagasinComponent {
 
     this.stockageImagesService.uploadImage(formData).subscribe({
       next: (res) => {
-        const imageUrl = res.imageUrl;
+        console.log('✅ Upload terminé', res);
+
+        const imageUrl = res.url; // ← c’est bien `url` dans la réponse de ton backend
 
         this.marchandiseService.createProduit({
           nom: this.newProduit.nom,
@@ -98,6 +128,18 @@ export class DashboardMagasinComponent {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  deleteProduit(id: string) {
+    this.marchandiseService.deleteMarchandise(id).subscribe({
+      next: () => {
+        this.loadMarchandises();
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = "Erreur lors de la suppression de la marchandise.";
+      }
+    });
   }
 
   onLogout() {

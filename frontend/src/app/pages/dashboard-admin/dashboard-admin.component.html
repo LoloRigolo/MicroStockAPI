@@ -29,22 +29,87 @@
 
   <h2 class="text-xl font-semibold mt-10 mb-4">📦 Liste des Stockages</h2>
 
-  <table *ngIf="stockages.length > 0" class="min-w-full bg-white border rounded shadow">
-    <thead class="bg-gray-200">
-      <tr>
-        <th class="px-4 py-2 border">ID Magasin</th>
-        <th class="px-4 py-2 border">ID Marchandise</th>
-        <th class="px-4 py-2 border">Volume</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let s of stockages">
-        <td class="px-4 py-2 border">{{ s.id_magasin }}</td>
-        <td class="px-4 py-2 border">{{ s.id_marchandise }}</td>
-        <td class="px-4 py-2 border">{{ s.volume }}</td>
-      </tr>
-    </tbody>
-  </table>
+ <table *ngIf="stockages.length > 0" class="min-w-full bg-white border rounded shadow">
+  <thead class="bg-gray-200">
+    <tr>
+      <th class="px-4 py-2 border">Magasin</th>
+      <th class="px-4 py-2 border">Marchandise</th>
+      <th class="px-4 py-2 border">Volume</th>
+      <th class="px-4 py-2 border">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let s of stockages">
+      <td>{{ s.nom_magasin || s.id_magasin }}</td>
+      <td>{{ s.nom_marchandise || s.id_marchandise }}</td>
+      <td>{{ s.volume }}</td>
+      <td class="flex space-x-2">
+        <button
+          (click)="increment(s)"
+          class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+        >
+          +
+        </button>
+        <button
+          (click)="decrement(s)"
+          class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+        >
+          -
+        </button>
+      </td>
+      <td class="px-4 py-2 border text-center">
+  <button
+    (click)="deleteStockageByRef(s.id_magasin, s.id_marchandise)"
+    class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+  >
+    Supprimer
+  </button>
+</td>
+    </tr>
+  </tbody>
+</table>
 
   <p *ngIf="stockages.length === 0" class="text-gray-500 mt-4">Aucun stockage trouvé.</p>
 </div>
+<h2 class="text-xl font-bold mt-10">➕ Ajouter un Stockage</h2>
+
+<form (ngSubmit)="onAddStockage()" #stockForm="ngForm" class="space-y-4 mt-4">
+  <div>
+    <label class="block font-semibold">Magasin</label>
+    <select [(ngModel)]="newStockage.id_magasin" name="id_magasin">
+  <option [value]="''" disabled selected>Choisir un magasin</option>
+  <option *ngFor="let magasin of magasins" [value]="magasin._id">
+    {{ magasin.nom }}
+  </option>
+</select>
+  </div>
+
+  <div>
+    <label class="block font-semibold">Marchandise</label>
+   <select [(ngModel)]="newStockage.id_marchandise" name="id_marchandise">
+  <option [value]="''" disabled selected>Choisir une marchandise</option>
+  <option *ngFor="let marchandise of marchandises" [value]="marchandise._id">
+    {{ marchandise.nom }}
+  </option>
+</select>
+  </div>
+
+  <div>
+    <label class="block font-semibold">Volume</label>
+    <input
+      type="number"
+      [(ngModel)]="newStockage.volume"
+      name="volume"
+      required
+      class="border border-gray-300 rounded w-full px-3 py-2"
+    />
+  </div>
+
+  <button
+    type="submit"
+    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+  >
+    Ajouter
+  </button>
+</form>
+

@@ -66,6 +66,16 @@ const createCommandeFromPanier = async (req, res) => {
   }
 };
 
+
+const getAllCommandes = async (req, res) => {
+  try {
+    const commandes = await Commande.find();
+    res.status(200).json(commandes);
+  } catch (err) {
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};
+
 const getCommandeById = async (req, res) => {
   try {
     const commande = await Commande.findById(req.params.id);
@@ -114,7 +124,8 @@ const updateCommandeStatus = async (req, res) => {
 
 module.exports = {
   createCommandeFromPanier,
+  getAllCommandes,
   getCommandeById,
   getCommandesByUserId,
-  updateCommandeStatus,
+  updateCommandeStatus
 };

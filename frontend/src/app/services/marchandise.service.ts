@@ -6,7 +6,6 @@ export interface Marchandise {
   _id?: string;
   nom: string;
   prix: number;
-  quantite?: number;
   imageUrl?: string;
 }
 
@@ -22,12 +21,11 @@ export class MarchandiseService {
     return this.http.get<Marchandise[]>(this.apiUrl);
   }
 
-  createProduitWithImage(formData: FormData) {
-    return this.http.post<any>(this.apiUrl, formData);
+  createProduit(produit: Marchandise): Observable<Marchandise> {
+    return this.http.post<Marchandise>(this.apiUrl, produit);
   }
 
-  // Pour DashboardUserComponent
-  createProduit(produit: { nom: string; prix: number; imageUrl?: string }) {
-  return this.http.post<any>('/marchandises', produit);
-}
+  deleteMarchandise(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

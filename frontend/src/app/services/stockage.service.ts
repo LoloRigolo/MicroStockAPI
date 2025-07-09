@@ -7,6 +7,8 @@ export interface Stockage {
   id_magasin: string;
   id_marchandise: string;
   volume: number;
+  nom_magasin?: string;
+  nom_marchandise?: string;
 }
 
 @Injectable({
@@ -21,15 +23,19 @@ export class StockageService {
     return this.http.get<Stockage[]>(this.apiUrl);
   }
 
-  createStockage(data: Stockage): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
-  }
-
-  updateStockage(id: string, data: Stockage): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+  createStockage(stockage: Stockage): Observable<any> {
+    return this.http.post<any>(this.apiUrl, stockage);
   }
 
   deleteStockage(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
+
+  deleteStockageByRef(id_magasin: string, id_marchandise: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id_magasin}/${id_marchandise}`);
+  }
+
+  updateVolume(id: string, variation: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}/volume`, { variation });
   }
 }

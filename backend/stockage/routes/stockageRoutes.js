@@ -7,7 +7,9 @@ const {
     getStockageByIdMarchandise,
     getStockageByIdMarchandiseAndIdMagasin,
     updatedStockage,
-    deletedStockage
+    deletedStockage,
+    updateStockageVolume,
+    deleteStockageByRef
 } = require('../controllers/stockageController');
 
 const router = express.Router();
@@ -20,6 +22,9 @@ router.get('/marchandise/:id_marchandise', getStockageByIdMarchandise)
 router.get('/marchandise/:id_marchandise/magasin/:id_magasin', getStockageByIdMarchandiseAndIdMagasin)
 router.put('/:id', updatedStockage);
 router.delete('/:id', deletedStockage);
+router.delete('/magasin/:id_magasin/marchandise/:id_marchandise', deleteStockageByRef);
+
+router.patch('/:id/volume', updateStockageVolume);
 
 
 module.exports = router;

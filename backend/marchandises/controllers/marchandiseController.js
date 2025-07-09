@@ -38,6 +38,7 @@ const createMarchandise = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
 const getAllMarchandises = async (req, res) => {
   try {
     const marchandises = await Marchandise.find();

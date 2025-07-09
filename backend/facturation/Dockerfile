@@ -2,6 +2,7 @@ FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y \
     libjpeg-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/facture-app

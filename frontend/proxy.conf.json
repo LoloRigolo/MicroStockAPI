@@ -33,6 +33,17 @@
     "target": "http://localhost:3013",
     "secure": false,
     "changeOrigin": true
+  },"/magasins": {
+    "target": "http://localhost:3007",
+    "secure": false,
+    "changeOrigin": true
+  },"/facture": {
+  "target": "http://localhost:3022",
+  "secure": false,
+  "changeOrigin": true,
+  "pathRewrite": {
+    "^/facture": ""
+  }
   }
 
 }

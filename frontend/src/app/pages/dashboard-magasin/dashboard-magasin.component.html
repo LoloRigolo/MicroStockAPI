@@ -32,7 +32,12 @@
           {{ m.prix | currency: 'EUR' }}
         </td>
         <td class="px-4 py-2 border">
-          <!-- boutons à ajouter plus tard si besoin -->
+          <button
+            (click)="deleteProduit(m._id!)"
+            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+          >
+            Supprimer
+          </button>
         </td>
       </tr>
     </tbody>
@@ -78,6 +83,48 @@
       Enregistrer la marchandise
     </button>
   </form>
+
+  <h2 class="text-xl font-bold mt-10">📦 Commandes</h2>
+
+<div *ngIf="error" class="text-red-600 mb-4">
+  {{ error }}
+</div>
+
+<table *ngIf="commandes.length > 0" class="min-w-full bg-white border rounded shadow mt-4">
+  <thead class="bg-gray-200">
+    <tr>
+      <th class="px-4 py-2 border">ID Commande</th>
+      <th class="px-4 py-2 border">Date</th>
+      <th class="px-4 py-2 border">Statut</th>
+      <th class="px-4 py-2 border">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let commande of commandes">
+      <td class="px-4 py-2 border">{{ commande._id }}</td>
+      <td class="px-4 py-2 border">{{ commande.created_at | date: 'short' }}</td>
+      <td class="px-4 py-2 border">{{ commande.status }}</td>
+      <td class="px-4 py-2 border space-x-2">
+        <button
+          class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
+          (click)="updateStatus(commande._id, 'valide')"
+        >
+          Valider
+        </button>
+        <button
+          class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+          (click)="updateStatus(commande._id, 'en_livraison')"
+        >
+          Mettre en livraison
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p *ngIf="commandes.length === 0" class="text-gray-500 mt-4">
+  Aucune commande trouvée.
+</p>
 
   <button
     (click)="onLogout()"
