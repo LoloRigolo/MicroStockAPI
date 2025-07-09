@@ -65,6 +65,17 @@ services:
     networks:
       - microservice
 
+  facture:
+    container_name: facture-micro-services
+    build:
+      context: ./backend/facturation
+    volumes:
+      - ./backend/facturation:/usr/src/facture-app
+    ports:
+      - 3022:3022
+    networks:
+      - microservice
+
   angular:
     container_name: angular-app
     build:
