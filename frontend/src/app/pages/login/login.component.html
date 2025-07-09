@@ -1,32 +1,32 @@
 <div class="max-w-md mx-auto mt-16 p-8 bg-white rounded shadow">
   <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
-  
+
   <form (submit)="onSubmit(); $event.preventDefault()">
     <div class="mb-4">
       <label for="email" class="block text-gray-700 mb-2">Email:</label>
-      <input 
+      <input
         [(ngModel)]="email"
         name="email"
         id="email"
-        type="email"
+        type="text"
         class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring focus:ring-blue-500"
         required
-      >
+      />
     </div>
 
     <div class="mb-4">
       <label for="password" class="block text-gray-700 mb-2">Password:</label>
-      <input 
+      <input
         [(ngModel)]="password"
         name="password"
         id="password"
         type="password"
         class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring focus:ring-blue-500"
         required
-      >
+      />
     </div>
 
-    <button 
+    <button
       type="submit"
       class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded"
     >
@@ -36,5 +36,9 @@
     <div *ngIf="error" class="mt-4 text-red-600 text-center">
       {{ error }}
     </div>
+    <p class="mt-4 text-center">
+      Pas encore de compte ?
+      <a routerLink="/register" class="text-blue-600 underline">Créer un compte</a>
+    </p>
   </form>
 </div>

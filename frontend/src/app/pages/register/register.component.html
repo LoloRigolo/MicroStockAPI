@@ -1,0 +1,20 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="registerForm">
+  <label>Username:</label>
+  <input type="text" formControlName="username" />
+
+  <label>Password:</label>
+  <input type="password" formControlName="password" />
+
+  <label>Role:</label>
+  <select formControlName="role">
+    <option value="admin">Admin</option>
+    <option value="user">User</option>
+    <option value="magasin">Magasin</option>
+  </select>
+
+  <button type="submit">Register</button>
+
+  <div *ngIf="errorMessage" class="text-red-600 mt-4 text-center">
+    {{ errorMessage }}
+  </div>
+</form>

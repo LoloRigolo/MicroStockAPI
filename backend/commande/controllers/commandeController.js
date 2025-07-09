@@ -57,7 +57,6 @@ const createCommandeFromPanier = async (req, res) => {
     });
 
     await commande.save();
-
     await axios.delete(`${process.env.PANIER_URL}/${id_panier}`);
 
     res.status(201).json({ message: "Commande créée", commande });

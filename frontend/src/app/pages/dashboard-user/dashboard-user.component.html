@@ -1,0 +1,86 @@
+<div class="max-w-5xl mx-auto p-6">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">
+      🛒 Liste des marchandises
+    </h1>
+    <button
+      routerLink="/panier"
+      class="flex items-center space-x-2 bg-green-500 text-white font-semibold px-4 py-2 rounded hover:bg-green-600 transition"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m13-9l2 9M10 21h4" />
+      </svg>
+      <span>Voir le panier</span>
+    </button>
+  </div>
+  <div class="flex justify-center mt-8">
+  <button
+    class="bg-purple-600 text-white font-bold px-6 py-3 rounded hover:bg-purple-700 transition"
+    (click)="goToCommandes()"
+  >
+    Voir mes commandes
+  </button>
+</div>
+
+  <div *ngIf="error" class="text-red-600 font-semibold mb-6">
+    {{ error }}
+  </div>
+
+  <div class="overflow-x-auto shadow rounded-lg border border-gray-200">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Nom
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Prix
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Quantité
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let m of marchandises">
+          <td class="px-6 py-4 whitespace-nowrap text-gray-800 font-semibold">
+            {{ m.nom }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+            {{ m.prix | currency: 'EUR' }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <input
+              type="number"
+              [(ngModel)]="m.quantite"
+              min="1"
+              class="border border-gray-300 rounded px-2 py-1 w-20"
+            />
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <button
+              (click)="addToPanier(m, m.quantite || 1)"
+              class="bg-blue-600 text-white font-semibold px-4 py-2 rounded hover:bg-blue-700 transition"
+            >
+              Ajouter au panier
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex justify-center mt-8">
+    <button
+      (click)="onLogout()"
+      class="bg-red-500 text-white font-bold px-6 py-3 rounded hover:bg-red-600 transition"
+    >
+      Logout
+    </button>
+  </div>
+</div>

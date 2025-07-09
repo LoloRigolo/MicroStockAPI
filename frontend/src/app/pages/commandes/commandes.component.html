@@ -1,0 +1,55 @@
+<div class="max-w-5xl mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6">📦 Mes Commandes</h1>
+
+  <div *ngIf="error" class="text-red-600 mb-4">
+    {{ error }}
+  </div>
+
+  <div *ngIf="commandes.length === 0" class="text-gray-600">
+    Vous n'avez pas encore de commandes.
+  </div>
+
+  <table
+    *ngIf="commandes.length > 0"
+    class="min-w-full bg-white border rounded shadow mt-4"
+  >
+    <thead class="bg-gray-200">
+      <tr>
+        <th class="px-4 py-2 border">ID Commande</th>
+        <th class="px-4 py-2 border">Date</th>
+        <th class="px-4 py-2 border">Statut</th>
+        <th class="px-4 py-2 border">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let commande of commandes">
+        <td class="px-4 py-2 border text-gray-800 font-mono">
+          {{ commande._id }}
+        </td>
+        <td class="px-4 py-2 border">
+          {{ commande.created_at | date: 'short' }}
+        </td>
+        <td class="px-4 py-2 border">
+          {{ commande.status }}
+        </td>
+        <td class="px-4 py-2 border">
+          <button
+            class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
+            (click)="goToDetail(commande._id)"
+          >
+            Voir détail
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="mt-6 flex justify-center">
+    <button
+      class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      (click)="retourDashboard()"
+    >
+      Retour au dashboard
+    </button>
+  </div>
+</div>

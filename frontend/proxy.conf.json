@@ -3,5 +3,30 @@
     "target": "http://localhost:3012",
     "secure": false,
     "changeOrigin": true
+  },
+  "/auth": {
+    "target": "http://localhost:3010",
+    "secure": false,
+    "changeOrigin": true
+  },    
+  "/panier": {
+    "target": "http://localhost:3020",
+    "secure": false,
+    "changeOrigin": true
+  },
+"/commandes": {
+  "target": "http://localhost:3021",
+  "secure": false,
+  "changeOrigin": true
+},
+  "/uploads": {
+    "target": "http://localhost:3015",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/upload": {
+    "target": "http://localhost:3015",
+    "secure": false,
+    "changeOrigin": true
   }
 }

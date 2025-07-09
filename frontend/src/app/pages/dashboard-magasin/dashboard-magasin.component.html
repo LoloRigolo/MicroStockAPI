@@ -1,0 +1,88 @@
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-4">Liste des marchandises</h1>
+
+  <div *ngIf="error" class="text-red-600 mb-6">
+    {{ error }}
+  </div>
+
+  <table class="min-w-full bg-white">
+    <thead>
+      <tr>
+        <th class="px-4 py-2 border">Image</th>
+        <th class="px-4 py-2 border">Nom</th>
+        <th class="px-4 py-2 border">Prix</th>
+        <th class="px-4 py-2 border">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of marchandises">
+        <td class="px-4 py-2 border">
+          <img
+            *ngIf="m.imageUrl"
+            [src]="'http://localhost:3012' + m.imageUrl"
+            alt="Image produit"
+            class="w-16 h-16 object-cover rounded"
+          />
+          <span *ngIf="!m.imageUrl" class="text-gray-400 italic">
+            Aucune image
+          </span>
+        </td>
+        <td class="px-4 py-2 border">{{ m.nom }}</td>
+        <td class="px-4 py-2 border">
+          {{ m.prix | currency: 'EUR' }}
+        </td>
+        <td class="px-4 py-2 border">
+          <!-- boutons à ajouter plus tard si besoin -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="text-xl font-semibold mb-4 mt-8">➕ Ajouter une marchandise</h2>
+
+  <form (submit)="uploadImageAndCreateProduit(); $event.preventDefault()" class="space-y-4">
+    <div>
+      <input
+        type="text"
+        placeholder="Nom"
+        [(ngModel)]="newProduit.nom"
+        name="nom"
+        class="border border-gray-300 rounded px-3 py-2 w-full"
+        required
+      />
+    </div>
+
+    <div>
+      <input
+        type="number"
+        placeholder="Prix"
+        [(ngModel)]="newProduit.prix"
+        name="prix"
+        class="border border-gray-300 rounded px-3 py-2 w-full"
+        required
+      />
+    </div>
+
+    <div>
+      <input type="file" (change)="onFileSelected($event)" class="w-full" />
+    </div>
+
+    <div *ngIf="imagePreview">
+      <img [src]="imagePreview" class="w-40 mt-4 rounded shadow" />
+    </div>
+
+    <button
+      type="submit"
+      class="bg-green-600 text-white font-bold px-6 py-3 rounded hover:bg-green-700 transition"
+    >
+      Enregistrer la marchandise
+    </button>
+  </form>
+
+  <button
+    (click)="onLogout()"
+    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-6 block mx-auto"
+  >
+    Logout
+  </button>
+</div>

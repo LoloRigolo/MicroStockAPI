@@ -1,14 +1,5 @@
-const Marchandise = require('../models/Marchandise');
+const Marchandise = require('../models/marchandise');
 
-const getAllMarchandises = async (req, res) => {
-    try {
-        const marchandises = await Marchandise.find();
-        res.json(marchandises);
-    } catch (error) {
-        console.error('Erreur lors de la récupération des marchandises:', error);
-        res.status(500).json({ message: 'Erreur serveur' });
-    }
-};
 
 const getMarchandiseById = async (req, res) => {
     try {
@@ -24,20 +15,37 @@ const getMarchandiseById = async (req, res) => {
 };
 
 const createMarchandise = async (req, res) => {
-    const { nom, prix } = req.body;
+  try {
+    console.log("REQ.BODY", req.body);
+
+    const { nom, prix, imageUrl } = req.body;
 
     if (!nom || !prix) {
-        return res.status(400).json({ message: "Des informations sont manquantes" });
+      return res.status(400).json({ message: "Nom ou prix manquant" });
     }
 
-    try {
-        const newMarchandise = new Marchandise({ nom, prix });
-        const savedMarchandise = await newMarchandise.save();
-        res.status(201).json({ message: "Marchandise ajoutée avec succès", marchandise: savedMarchandise });
-    } catch (error) {
-        console.error('Erreur lors de la création de la marchandise:', error);
-        res.status(400).json({ message: 'Erreur de création de la marchandise' });
-    }  
+    const newMarchandise = new Marchandise({
+      nom,
+      prix,
+      imageUrl: imageUrl || null
+    });
+
+    const saved = await newMarchandise.save();
+
+    res.status(201).json(saved);
+  } catch (error) {
+    console.error("Erreur lors de la création de la marchandise :", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+const getAllMarchandises = async (req, res) => {
+  try {
+    const marchandises = await Marchandise.find();
+    res.json(marchandises);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
 };
 
 const updatedMarchandise = async (req, res) => {
@@ -72,4 +80,10 @@ const deletedMarchandise = async (req, res) => {
     }
 };
 
-module.exports = { createMarchandise, getAllMarchandises, getMarchandiseById, updatedMarchandise, deletedMarchandise };
+module.exports = {
+  createMarchandise,
+  getAllMarchandises,
+  getMarchandiseById,
+  updatedMarchandise,      // ← il te manque probablement celui-là
+  deletedMarchandise
+};
