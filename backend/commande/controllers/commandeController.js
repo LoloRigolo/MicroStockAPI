@@ -37,11 +37,13 @@ const createCommandeFromPanier = async (req, res) => {
       totalHT += total_ligne;
 
       articlesEnrichis.push({
-        article_id: article.article_id,
-        quantite: article.quantite,
-        prix_unitaire,
-        total_ht: total_ligne,
-      });
+  article_id:     article.article_id,
+  nom:            marchandise.nom,   
+  prix:           prix_unitaire,     
+  quantite:       article.quantite,
+  prix_unitaire,                       
+  total_ht:       total_ligne,
+});
     }
 
     const tva = +(totalHT * 0.2).toFixed(2);
