@@ -43,6 +43,10 @@
   "changeOrigin": true,
   "pathRewrite": {
     "^/facture": ""
+  },"/uploads": {
+    "target": "http://localhost:3012",   
+    "secure": false,
+    "changeOrigin": true
   }
   }
 

@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Marchandise, MarchandiseService } from '../../services/marchandise.service';
-import { PanierService } from '../../services/panier.service';
-import { HttpClientModule } from '@angular/common/http';
+import { CommonModule }      from '@angular/common';
+import { FormsModule }       from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { HttpClientModule }  from '@angular/common/http';
+
+import { Marchandise, MarchandiseService } from '../../services/marchandise.service';
+import { PanierService }       from '../../services/panier.service';
 import { StockageImagesService } from '../../services/stockage-images.service';
-import { CommandeService } from '../../services/commande.service';
+import { CommandeService }     from '../../services/commande.service';
+
 
 @Component({
   selector: 'app-dashboard-magasin',
@@ -21,13 +23,18 @@ import { CommandeService } from '../../services/commande.service';
   styleUrls: ['./dashboard-magasin.component.scss']
 })
 export class DashboardMagasinComponent implements OnInit {
-  marchandises: Marchandise[] = [];
-  error = '';
-  newProduit: { nom: string; prix: number } = { nom: '', prix: 0 };
+  // onglet actif: 'list', 'add', 'orders'
+  section: 'list' | 'add' | 'orders' = 'list';
 
+  marchandises: Marchandise[] = [];
+  commandes: any[] = [];
+  error = '';
+
+
+  // création de produit
+  newProduit = { nom: '', prix: 0 };
   selectedImage: File | null = null;
   imagePreview: string | null = null;
-  commandes: any[] = [];
 
   constructor(
     private marchandiseService: MarchandiseService,
@@ -42,107 +49,77 @@ export class DashboardMagasinComponent implements OnInit {
     this.loadCommandes();
   }
 
+  // switch d’onglet
+  show(sec: 'list' | 'add' | 'orders') {
+    this.section = sec;
+    this.error = '';
+  }
+
+  // marchandises
   loadMarchandises() {
     this.marchandiseService.getAllMarchandises().subscribe({
-      next: (data) => {
-        this.marchandises = data;
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = 'Erreur lors du chargement des marchandises.';
-      }
+      next: data => this.marchandises = data,
+      error: err => { console.error(err); this.error = 'Erreur chargement produits.'; }
     });
   }
-
-  loadCommandes() {
-    this.commandeService.getAllCommandes().subscribe({
-      next: (res) => {
-        this.commandes = res;
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = 'Erreur lors du chargement des commandes.';
-      }
-    });
-  }
-
-  updateStatus(commandeId: string, status: string) {
-    this.commandeService.updateCommandeStatus(commandeId, status).subscribe({
-      next: () => {
-        this.loadCommandes();
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = 'Erreur lors de la mise à jour du statut.';
-      }
-    });
-  }
-
-  uploadImageAndCreateProduit() {
-    if (!this.selectedImage) {
-      this.error = "Sélectionne d'abord une image !";
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', this.selectedImage);
-
-    this.stockageImagesService.uploadImage(formData).subscribe({
-      next: (res) => {
-        console.log('✅ Upload terminé', res);
-
-        const imageUrl = res.url; // ← c’est bien `url` dans la réponse de ton backend
-
-        this.marchandiseService.createProduit({
-          nom: this.newProduit.nom,
-          prix: this.newProduit.prix,
-          imageUrl
-        }).subscribe({
-          next: () => {
-            this.loadMarchandises();
-            this.newProduit = { nom: '', prix: 0 };
-            this.selectedImage = null;
-            this.imagePreview = null;
-          },
-          error: (err) => {
-            console.error(err);
-            this.error = 'Erreur lors de l’ajout de la marchandise.';
-          }
-        });
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = 'Erreur lors de l’upload de l’image.';
-      }
-    });
-  }
-
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedImage = file;
-
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imagePreview = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
   deleteProduit(id: string) {
     this.marchandiseService.deleteMarchandise(id).subscribe({
-      next: () => {
-        this.loadMarchandises();
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = "Erreur lors de la suppression de la marchandise.";
-      }
+      next: () => this.loadMarchandises(),
+      error: err => { console.error(err); this.error = 'Erreur suppression produit.'; }
     });
   }
 
-  onLogout() {
-    this.router.navigate(['/login']);
+  // création
+  onFileSelected(e: any) {
+    const f = e.target.files[0];
+    if (f) {
+      this.selectedImage = f;
+      const reader = new FileReader();
+      reader.onload = ev => this.imagePreview = (ev.target as any).result;
+      reader.readAsDataURL(f);
+    }
   }
+  uploadImageAndCreateProduit() {
+    if (!this.selectedImage) {
+      this.error = 'Sélectionnez une image !'; return;
+    }
+    const fd = new FormData();
+    fd.append('image', this.selectedImage);
+    this.stockageImagesService.uploadImage(fd).subscribe({
+      next: res => {
+        const url = res.url;
+        this.marchandiseService.createProduit({
+          nom:   this.newProduit.nom,
+          prix:  this.newProduit.prix,
+          imageUrl: url
+        }).subscribe({
+          next: () => {
+            this.newProduit = { nom: '', prix: 0 };
+            this.selectedImage = null; this.imagePreview = null;
+            this.loadMarchandises();
+            this.section = 'list';
+          },
+          error: err => { console.error(err); this.error = 'Erreur création produit.'; }
+        });
+      },
+      error: err => { console.error(err); this.error = 'Erreur upload image.'; }
+    });
+  }
+
+  // commandes
+  loadCommandes() {
+    this.commandeService.getAllCommandes().subscribe({
+      next: res => this.commandes = res,
+      error: err => { console.error(err); this.error = 'Erreur chargement commandes.'; }
+    });
+  }
+  updateStatus(id: string, status: string) {
+    this.commandeService.updateCommandeStatus(id, status).subscribe({
+      next: () => this.loadCommandes(),
+      error: err => { console.error(err); this.error = 'Erreur maj statut.'; }
+    });
+  }
+
+  // déconnexion
+ 
 }

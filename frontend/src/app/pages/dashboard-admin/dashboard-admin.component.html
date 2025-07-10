@@ -1,115 +1,131 @@
-<div class="container mx-auto p-6">
-  <h1 class="text-2xl font-bold mb-4">Dashboard Admin</h1>
+<div class="max-w-4xl mx-auto p-6">
+  <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+    <nav class="flex bg-gray-100 border-b border-gray-200">
+      <button
+        (click)="selectTab('createUser')"
+        [ngClass]="{
+          'border-blue-600 text-[#0077B6]': activeTab==='createUser',
+          'text-gray-600 hover:bg-gray-200': activeTab!=='createUser'
+        }"
+        class="flex-1 px-6 py-3 text-center font-medium border-b-2 border-transparent transition"
+      >
+        Créer utilisateur
+      </button>
 
-  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-    {{ error }}
+      <button
+        (click)="selectTab('listStock')"
+        [ngClass]="{
+          'border-blue-600 text-[#0077B6]': activeTab==='listStock',
+          'text-gray-600 hover:bg-gray-200': activeTab!=='listStock'
+        }"
+        class="flex-1 px-6 py-3 text-center font-medium border-b-2 border-transparent transition"
+      >
+        Liste des stockages
+      </button>
+
+      <button
+        (click)="selectTab('addStock')"
+        [ngClass]="{
+          'border-blue-600 text-[#0077B6]': activeTab==='addStock',
+          'text-gray-600 hover:bg-gray-200': activeTab!=='addStock'
+        }"
+        class="flex-1 px-6 py-3 text-center font-medium border-b-2 border-transparent transition"
+      >
+        Ajouter un stockage
+      </button>
+    </nav>
+
+    <div class="p-6 space-y-6">
+      <div *ngIf="error" class="bg-red-50 text-red-700 px-4 py-2 rounded">{{ error }}</div>
+      <div *ngIf="success" class="bg-green-50 text-green-700 px-4 py-2 rounded">{{ success }}</div>
+
+      <section *ngIf="activeTab==='createUser'" class="space-y-4">
+        <form (submit)="createUser(); $event.preventDefault()" class="space-y-4">
+          <div>
+            <label class="block font-medium mb-1">Nom d’utilisateur</label>
+            <input [(ngModel)]="newUser.username" name="username"
+                   class="w-full border border-gray-300 px-3 py-2 rounded"/>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Mot de passe</label>
+            <input [(ngModel)]="newUser.password" name="password" type="password"
+                   class="w-full border border-gray-300 px-3 py-2 rounded"/>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Rôle</label>
+            <select [(ngModel)]="newUser.role" name="role"
+                    class="w-full border border-gray-300 px-3 py-2 rounded">
+              <option>User</option>
+              <option>Admin</option>
+              <option>Magasin</option>
+            </select>
+          </div>
+          <button type="submit"
+                  class="bg-[#0077B6] hover:bg-[#090B0C] text-white px-4 py-2 rounded">
+            Créer l’utilisateur
+          </button>
+        </form>
+      </section>
+
+      <section *ngIf="activeTab==='listStock'">
+        <table class="min-w-full bg-white rounded shadow-sm overflow-hidden">
+          <thead class="bg-[#0077B6] text-white">
+            <tr>
+              <th class="px-4 py-2 text-left">Magasin</th>
+              <th class="px-4 py-2 text-left">Marchandise</th>
+              <th class="px-4 py-2 text-left">Volume</th>
+              <th class="px-4 py-2 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let s of stockages" class="hover:bg-gray-50">
+              <td class="px-4 py-2">{{ s.nom_magasin || s.id_magasin }}</td>
+              <td class="px-4 py-2">{{ s.nom_marchandise || s.id_marchandise }}</td>
+              <td class="px-4 py-2">{{ s.volume }}</td>
+              <td class="px-4 py-2 text-center space-x-2">
+                <button (click)="increment(s)"
+                        class="px-2 py-1 bg-[#0077B6] hover:bg-[#090B0C] text-white rounded">+</button>
+                <button (click)="decrement(s)"
+                        class="px-2 py-1 bg-[#0077B6] hover:bg-[#090B0C] text-white rounded">–</button>
+                <button (click)="deleteStockageByRef(s.id_magasin,s.id_marchandise)"
+                        class="px-2 py-1 bg-gray-300 hover:bg-gray-400 text-[#090B0C] rounded">
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section *ngIf="activeTab==='addStock'" class="space-y-4">
+        <form (ngSubmit)="onAddStockage()" class="space-y-4">
+          <div>
+            <label class="block font-medium mb-1">Magasin</label>
+            <select [(ngModel)]="newStockage.id_magasin" name="id_magasin"
+                    class="w-full border border-gray-300 px-3 py-2 rounded">
+              <option value="" disabled>Choisir un magasin</option>
+              <option *ngFor="let m of magasins" [value]="m._id">{{ m.nom }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Marchandise</label>
+            <select [(ngModel)]="newStockage.id_marchandise" name="id_marchandise"
+                    class="w-full border border-gray-300 px-3 py-2 rounded">
+              <option value="" disabled>Choisir une marchandise</option>
+              <option *ngFor="let m of marchandises" [value]="m._id">{{ m.nom }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Volume</label>
+            <input type="number" min="0" [(ngModel)]="newStockage.volume" name="volume"
+                   class="w-full border border-gray-300 px-3 py-2 rounded"/>
+          </div>
+          <button type="submit"
+                  class="bg-[#0077B6] hover:bg-[#090B0C] text-white px-4 py-2 rounded">
+            Ajouter le stockage
+          </button>
+        </form>
+      </section>
+    </div>
   </div>
-  <div *ngIf="success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-    {{ success }}
-  </div>
-
-  <form (submit)="createUser(); $event.preventDefault()">
-    <label>Nom d'utilisateur</label>
-    <input [(ngModel)]="newUser.username" name="email" class="border border-gray-300 rounded px-3 py-2 w-full mb-3" required />
-
-    <label>Mot de passe</label>
-    <input [(ngModel)]="newUser.password" name="password" type="password" class="border border-gray-300 rounded px-3 py-2 w-full mb-3" required />
-
-    <label>Rôle</label>
-    <select [(ngModel)]="newUser.role" name="role" class="border border-gray-300 rounded px-3 py-2 w-full mb-3">
-      <option value="User">User</option>
-      <option value="Admin">Admin</option>
-      <option value="Magasin">Magasin</option>
-    </select>
-
-    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-      Créer utilisateur
-    </button>
-  </form>
-
-  <h2 class="text-xl font-semibold mt-10 mb-4">📦 Liste des Stockages</h2>
-
- <table *ngIf="stockages.length > 0" class="min-w-full bg-white border rounded shadow">
-  <thead class="bg-gray-200">
-    <tr>
-      <th class="px-4 py-2 border">Magasin</th>
-      <th class="px-4 py-2 border">Marchandise</th>
-      <th class="px-4 py-2 border">Volume</th>
-      <th class="px-4 py-2 border">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let s of stockages">
-      <td>{{ s.nom_magasin || s.id_magasin }}</td>
-      <td>{{ s.nom_marchandise || s.id_marchandise }}</td>
-      <td>{{ s.volume }}</td>
-      <td class="flex space-x-2">
-        <button
-          (click)="increment(s)"
-          class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-        >
-          +
-        </button>
-        <button
-          (click)="decrement(s)"
-          class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-        >
-          -
-        </button>
-      </td>
-      <td class="px-4 py-2 border text-center">
-  <button
-    (click)="deleteStockageByRef(s.id_magasin, s.id_marchandise)"
-    class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-  >
-    Supprimer
-  </button>
-</td>
-    </tr>
-  </tbody>
-</table>
-
-  <p *ngIf="stockages.length === 0" class="text-gray-500 mt-4">Aucun stockage trouvé.</p>
 </div>
-<h2 class="text-xl font-bold mt-10">➕ Ajouter un Stockage</h2>
-
-<form (ngSubmit)="onAddStockage()" #stockForm="ngForm" class="space-y-4 mt-4">
-  <div>
-    <label class="block font-semibold">Magasin</label>
-    <select [(ngModel)]="newStockage.id_magasin" name="id_magasin">
-  <option [value]="''" disabled selected>Choisir un magasin</option>
-  <option *ngFor="let magasin of magasins" [value]="magasin._id">
-    {{ magasin.nom }}
-  </option>
-</select>
-  </div>
-
-  <div>
-    <label class="block font-semibold">Marchandise</label>
-   <select [(ngModel)]="newStockage.id_marchandise" name="id_marchandise">
-  <option [value]="''" disabled selected>Choisir une marchandise</option>
-  <option *ngFor="let marchandise of marchandises" [value]="marchandise._id">
-    {{ marchandise.nom }}
-  </option>
-</select>
-  </div>
-
-  <div>
-    <label class="block font-semibold">Volume</label>
-    <input
-      type="number"
-      [(ngModel)]="newStockage.volume"
-      name="volume"
-      required
-      class="border border-gray-300 rounded w-full px-3 py-2"
-    />
-  </div>
-
-  <button
-    type="submit"
-    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-  >
-    Ajouter
-  </button>
-</form>
-
