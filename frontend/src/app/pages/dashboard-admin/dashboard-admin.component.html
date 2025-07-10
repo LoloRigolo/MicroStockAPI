@@ -10,7 +10,7 @@
 
   <form (submit)="createUser(); $event.preventDefault()">
     <label>Nom d'utilisateur</label>
-    <input [(ngModel)]="newUser.email" name="email" class="border border-gray-300 rounded px-3 py-2 w-full mb-3" required />
+    <input [(ngModel)]="newUser.username" name="email" class="border border-gray-300 rounded px-3 py-2 w-full mb-3" required />
 
     <label>Mot de passe</label>
     <input [(ngModel)]="newUser.password" name="password" type="password" class="border border-gray-300 rounded px-3 py-2 w-full mb-3" required />

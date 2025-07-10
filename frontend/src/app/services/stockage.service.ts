@@ -32,10 +32,13 @@ export class StockageService {
   }
 
   deleteStockageByRef(id_magasin: string, id_marchandise: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id_magasin}/${id_marchandise}`);
+   return this.http.delete<any>(
+      `${this.apiUrl}/magasin/${id_magasin}/marchandise/${id_marchandise}`
+    );
   }
 
   updateVolume(id: string, variation: number): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/volume`, { variation });
+    return this.http
+     .patch<any>(`${this.apiUrl}/${id}/volume`, { delta: variation });
   }
 }

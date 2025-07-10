@@ -18,10 +18,10 @@ import { MarchandiseService } from '../../services/marchandise.service';
 export class DashboardAdminComponent implements OnInit {
   
   newUser = {
-    email: '',
-    password: '',
-    role: 'User'
-  };
+  username: '',    // ← avant c'était "email"
+  password: '',
+  role: 'User'
+};
 
   stockages: Stockage[] = [];
   magasins: any[] = [];
@@ -88,7 +88,7 @@ export class DashboardAdminComponent implements OnInit {
     this.authService.register(this.newUser).subscribe({
       next: () => {
         this.success = 'Utilisateur créé avec succès !';
-        this.newUser = { email: '', password: '', role: 'User' };
+        this.newUser = { username: '', password: '', role: 'User' };
         this.error = '';
       },
       error: (err) => {
