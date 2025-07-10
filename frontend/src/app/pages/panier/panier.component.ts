@@ -16,10 +16,16 @@ import { CommandeService } from '../../services/commande.service';
 })
 export class PanierComponent implements OnInit {
   userId = '';
-  panierArticles: any[] = [];
+  panierArticles: Array<{
+    article_id: string;
+    nom: string;
+    prix: number;
+    imageUrl: string;
+    quantite: number;
+  }> = [];
   error = '';
   marchandises: Marchandise[] = [];
-  panierId: string = '';
+  panierId = '';
 
   constructor(
     private panierService: PanierService,
@@ -33,9 +39,7 @@ export class PanierComponent implements OnInit {
     if (token) {
       const decoded: any = jwtDecode(token);
       this.userId = decoded.userId;
-      console.log('✅ userId récupéré du token :', this.userId);
     }
-
     this.loadPanier();
   }
 
@@ -48,54 +52,53 @@ export class PanierComponent implements OnInit {
 
         this.panierService.getPanierByUser(this.userId).subscribe({
           next: (paniers) => {
-            const panier = paniers && paniers.length > 0 ? paniers[0] : null;
-
-            if (panier) {
-              this.panierId = panier._id;
-
-              this.panierArticles = panier.articles.map((a: any) => {
-                const marchandise = this.marchandises.find(
-                  (m) => m._id === a.article_id
-                );
-
-                return {
-                  article_id: a.article_id,
-                  nom: marchandise?.nom || a.article_id,
-                  prix: marchandise?.prix || a.prix,
-                  quantite: a.quantite,
-                };
-              });
-            } else {
+            const panier = paniers?.[0];
+            if (!panier) {
               this.panierArticles = [];
+              return;
             }
+            this.panierId = panier._id;
+            this.panierArticles = panier.articles.map((a: any) => {
+              const m = this.marchandises.find(m => m._id === a.article_id) || {};
+
+  const rawUrl = (m as any).imageUrl || '';
+  const imageUrl = rawUrl.startsWith('/') ? rawUrl : `/uploads/${rawUrl}`;
+
+  return {
+    article_id: a.article_id,
+    nom:         (m as any).nom       || 'Produit inconnu',
+    prix:        (m as any).prix      || 0,
+    imageUrl:    imageUrl,
+    quantite:    a.quantite
+  };
+            });
           },
-          error: (err) => {
+          error: err => {
             console.error(err);
             this.error = 'Erreur lors du chargement du panier.';
           }
         });
-      }
+      },
+      error: err => console.error(err)
     });
   }
 
-  increaseQuantity(article: any) {
-    article.quantite += 1;
+  increaseQuantity(a: any) {
+    a.quantite++;
     this.updatePanier();
   }
 
-  decreaseQuantity(article: any) {
-    if (article.quantite > 1) {
-      article.quantite -= 1;
+  decreaseQuantity(a: any) {
+    if (a.quantite > 1) {
+      a.quantite--;
       this.updatePanier();
     } else {
-      this.removeArticle(article);
+      this.removeArticle(a);
     }
   }
 
-  removeArticle(article: any) {
-    this.panierArticles = this.panierArticles.filter(
-      (a) => a.article_id !== article.article_id
-    );
+  removeArticle(a: any) {
+    this.panierArticles = this.panierArticles.filter(x => x.article_id !== a.article_id);
     this.updatePanier();
   }
 
@@ -105,48 +108,31 @@ export class PanierComponent implements OnInit {
   }
 
   updatePanier() {
-    if (!this.panierId) {
-      console.error("Panier introuvable");
-      return;
-    }
-
-    const updatedArticles = this.panierArticles.map((a) => ({
+    if (!this.panierId) return;
+    const updated = this.panierArticles.map(a => ({
       article_id: a.article_id,
-      quantite: a.quantite,
+      quantite:   a.quantite
     }));
-
-    this.panierService.updatePanier(this.panierId, updatedArticles)
-      .subscribe({
-        next: () => {
-          console.log("✅ Panier mis à jour en base !");
-        },
-        error: (err) => {
-          console.error(err);
-          this.error = "Erreur lors de la mise à jour du panier.";
-        }
-      });
-  }
-
-  validatePanier() {
-    if (!this.panierId) {
-      alert('Panier introuvable.');
-      return;
-    }
-
-    this.commandeService.createCommandeFromPanier(this.panierId).subscribe({
-      next: (res) => {
-        console.log('✅ Commande créée : ', res);
-        alert('Commande validée !');
-        this.router.navigate(['/dashboard-user']);
-      },
-      error: (err) => {
+    this.panierService.updatePanier(this.panierId, updated).subscribe({
+      next: () => {},
+      error: err => {
         console.error(err);
-        alert('Erreur lors de la validation du panier.');
+        this.error = 'Erreur lors de la mise à jour du panier.';
       }
     });
   }
 
-  retourDashboard() {
-    this.router.navigate(['/dashboard-user']);
+  validatePanier() {
+    if (!this.panierId) return alert('Panier introuvable.');
+    this.commandeService.createCommandeFromPanier(this.panierId).subscribe({
+      next: () => {
+        alert('Commande validée !');
+        this.router.navigate(['/dashboard-user']);
+      },
+      error: err => {
+        console.error(err);
+        alert('Erreur lors de la validation.');
+      }
+    });
   }
 }

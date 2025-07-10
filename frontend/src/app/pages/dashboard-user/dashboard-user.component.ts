@@ -162,4 +162,11 @@ export class DashboardUserComponent implements OnInit {
   onLogout() {
     this.router.navigate(['/login']);
   }
+   decrement(id: string) {
+    this.quantites[id] = Math.max(1, this.quantites[id] - 1);
+  }
+
+  increment(id: string) {
+    this.quantites[id] = (this.quantites[id] || 0) + 1;
+  }
 }

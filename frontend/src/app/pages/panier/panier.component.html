@@ -1,76 +1,74 @@
-<div class="container mx-auto p-6">
-  <h1 class="text-2xl font-bold mb-6">🛒 Mon Panier</h1>
+<div class="min-h-screen bg-[#F1F4F6]">
+ 
+  <main class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-[#090B0C] mb-6">🛒 Mon Panier</h1>
 
-  <div *ngIf="error" class="text-red-600">{{ error }}</div>
+    <div *ngIf="error" class="text-red-600 mb-4">{{ error }}</div>
+    <div *ngIf="!error && panierArticles.length === 0" class="text-gray-500 mb-4">
+      Ton panier est vide.
+    </div>
 
-  <div *ngIf="panierArticles.length === 0" class="text-gray-500">
-    Ton panier est vide.
-  </div>
+    <div *ngIf="panierArticles.length > 0" class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-[#0077B6] text-white">
+          <tr>
+            <th class="px-4 py-2">Image</th>
+            <th class="px-4 py-2">Nom</th>
+            <th class="px-4 py-2">Prix</th>
+            <th class="px-4 py-2">Quantité</th>
+            <th class="px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of panierArticles" class="border-b border-gray-200">
+            <td class="px-4 py-3">
+              <img
+                [src]="a.imageUrl"
+                alt="{{ a.nom }}"
+                class="w-16 h-16 object-contain"
+              />
+            </td>
+            <td class="px-4 py-3 text-[#090B0C] font-medium">{{ a.nom }}</td>
+            <td class="px-4 py-3 text-gray-700">{{ a.prix | currency:'EUR' }}</td>
+            <td class="px-4 py-3">
+              <div class="inline-flex items-center space-x-2">
+                <button
+                  (click)="decreaseQuantity(a)"
+                  class="w-8 h-8 bg-[#090B0C] hover:bg-[#0077B6] text-white rounded flex items-center justify-center transition"
+                >–</button>
+                <span class="text-[#090B0C] font-semibold">{{ a.quantite }}</span>
+                <button
+                  (click)="increaseQuantity(a)"
+                  class="w-8 h-8 bg-[#0077B6] hover:bg-[#090B0C] text-white rounded flex items-center justify-center transition"
+                >+</button>
+              </div>
+            </td>
+            <td class="px-4 py-3">
+              <button
+                (click)="removeArticle(a)"
+                class="px-3 py-1 bg-[#090B0C] hover:bg-[#0077B6] text-white rounded transition"
+              >
+                Supprimer
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-  <table *ngIf="panierArticles.length > 0" class="min-w-full bg-white border rounded shadow">
-    <thead class="bg-gray-200">
-      <tr>
-        <th class="px-4 py-2 border">Nom</th>
-        <th class="px-4 py-2 border">Prix</th>
-        <th class="px-4 py-2 border">Quantité</th>
-        <th class="px-4 py-2 border">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let article of panierArticles">
-        <td class="px-4 py-2 border">{{ article.nom }}</td>
-        <td class="px-4 py-2 border">{{ article.prix | currency: 'EUR' }}</td>
-        <td class="px-4 py-2 border">
-          <div class="flex items-center justify-center space-x-2">
-            <button
-              (click)="decreaseQuantity(article)"
-              class="bg-gray-300 text-gray-800 px-2 py-1 rounded hover:bg-gray-400"
-            >
-              −
-            </button>
-            <span class="text-gray-700 font-semibold">{{ article.quantite }}</span>
-            <button
-              (click)="increaseQuantity(article)"
-              class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-            >
-              +
-            </button>
-          </div>
-        </td>
-        <td class="px-4 py-2 border text-center">
-          <button
-            (click)="removeArticle(article)"
-            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-          >
-            Supprimer
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="panierArticles.length > 0" class="mt-6 flex justify-center space-x-4">
-    <button
-      (click)="emptyPanier()"
-      class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-    >
-      Vider le panier
-    </button>
-
-    <button
-      (click)="validatePanier()"
-      class="bg-green-600 text-white font-bold px-6 py-3 rounded hover:bg-green-700 transition"
-    >
-      Valider le panier
-    </button>
-  </div>
-
-  <div class="flex justify-center mt-6">
-    <button
-      class="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      (click)="retourDashboard()"
-    >
-      Retour au dashboard
-    </button>
-  </div>
+    <div *ngIf="panierArticles.length > 0" class="mt-6 flex justify-end space-x-4">
+      <button
+        (click)="emptyPanier()"
+        class="px-5 py-2 bg-[#090B0C] hover:bg-[#0077B6] text-white rounded transition"
+      >
+        Vider le panier
+      </button>
+      <button
+        (click)="validatePanier()"
+        class="px-6 py-2 bg-[#0077B6] hover:bg-[#090B0C] text-white font-semibold rounded transition"
+      >
+        Valider la commande
+      </button>
+    </div>
+  </main>
 </div>
