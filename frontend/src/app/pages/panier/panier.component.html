@@ -1,0 +1,74 @@
+<div class="min-h-screen bg-[#F1F4F6]">
+ 
+  <main class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-[#090B0C] mb-6">🛒 Mon Panier</h1>
+
+    <div *ngIf="error" class="text-red-600 mb-4">{{ error }}</div>
+    <div *ngIf="!error && panierArticles.length === 0" class="text-gray-500 mb-4">
+      Ton panier est vide.
+    </div>
+
+    <div *ngIf="panierArticles.length > 0" class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-[#0077B6] text-white">
+          <tr>
+            <th class="px-4 py-2">Image</th>
+            <th class="px-4 py-2">Nom</th>
+            <th class="px-4 py-2">Prix</th>
+            <th class="px-4 py-2">Quantité</th>
+            <th class="px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of panierArticles" class="border-b border-gray-200">
+            <td class="px-4 py-3">
+              <img
+                [src]="a.imageUrl"
+                alt="{{ a.nom }}"
+                class="w-16 h-16 object-contain"
+              />
+            </td>
+            <td class="px-4 py-3 text-[#090B0C] font-medium">{{ a.nom }}</td>
+            <td class="px-4 py-3 text-gray-700">{{ a.prix | currency:'EUR' }}</td>
+            <td class="px-4 py-3">
+              <div class="inline-flex items-center space-x-2">
+                <button
+                  (click)="decreaseQuantity(a)"
+                  class="w-8 h-8 bg-[#090B0C] hover:bg-[#0077B6] text-white rounded flex items-center justify-center transition"
+                >–</button>
+                <span class="text-[#090B0C] font-semibold">{{ a.quantite }}</span>
+                <button
+                  (click)="increaseQuantity(a)"
+                  class="w-8 h-8 bg-[#0077B6] hover:bg-[#090B0C] text-white rounded flex items-center justify-center transition"
+                >+</button>
+              </div>
+            </td>
+            <td class="px-4 py-3">
+              <button
+                (click)="removeArticle(a)"
+                class="px-3 py-1 bg-[#090B0C] hover:bg-[#0077B6] text-white rounded transition"
+              >
+                Supprimer
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="panierArticles.length > 0" class="mt-6 flex justify-end space-x-4">
+      <button
+        (click)="emptyPanier()"
+        class="px-5 py-2 bg-[#090B0C] hover:bg-[#0077B6] text-white rounded transition"
+      >
+        Vider le panier
+      </button>
+      <button
+        (click)="validatePanier()"
+        class="px-6 py-2 bg-[#0077B6] hover:bg-[#090B0C] text-white font-semibold rounded transition"
+      >
+        Valider la commande
+      </button>
+    </div>
+  </main>
+</div>

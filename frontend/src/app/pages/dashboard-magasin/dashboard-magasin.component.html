@@ -1,0 +1,135 @@
+<div class="min-h-screen bg-[#F1F4F6]">
+
+  <div class="bg-white shadow px-6 py-4 flex justify-center space-x-4">
+    <button
+      (click)="show('list')"
+      [class.bg-[#0077B6]]="section==='list'"
+      [class.text-white]="section==='list'"
+      class="px-4 py-2 rounded font-semibold transition"
+    >
+      Produits
+    </button>
+    <button
+      (click)="show('add')"
+      [class.bg-[#0077B6]]="section==='add'"
+      [class.text-white]="section==='add'"
+      class="px-4 py-2 rounded font-semibold transition"
+    >
+      + Produit
+    </button>
+    <button
+      (click)="show('orders')"
+      [class.bg-[#0077B6]]="section==='orders'"
+      [class.text-white]="section==='orders'"
+      class="px-4 py-2 rounded font-semibold transition"
+    >
+      Commandes
+    </button>
+    
+  </div>
+
+  <div class="container mx-auto p-6">
+    <div *ngIf="error" class="bg-red-50 text-red-700 px-4 py-2 rounded mb-6">
+      {{ error }}
+    </div>
+    <section *ngIf="section==='list'">
+      <h2 class="text-2xl font-bold mb-4 text-[#090B0C]">Liste des produits</h2>
+      <table class="min-w-full bg-white rounded shadow overflow-hidden">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-4 py-2 text-left">Image</th>
+            <th class="px-4 py-2 text-left">Nom</th>
+            <th class="px-4 py-2 text-left">Prix</th>
+            <th class="px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of marchandises" class="border-b">
+  <td class="px-4 py-2">
+    <img
+      *ngIf="m.imageUrl"
+      [src]="m.imageUrl"
+      alt="{{ m.nom }}"
+      class="w-24 h-24 object-contain rounded"
+    />
+  </td>
+  <td class="px-4 py-2 text-[#090B0C]">{{ m.nom }}</td>
+  <td class="px-4 py-2">{{ m.prix | currency:'EUR' }}</td>
+  <td class="px-4 py-2 text-center">
+    <button
+      (click)="deleteProduit(m._id!)"
+      class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+    >
+      Supprimer
+    </button>
+  </td>
+</tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section *ngIf="section==='add'">
+      <h2 class="text-2xl font-bold mb-4 text-[#090B0C]">Ajouter un produit</h2>
+      <form (ngSubmit)="uploadImageAndCreateProduit(); $event.preventDefault()" class="space-y-4">
+        <input
+          type="text" placeholder="Nom"
+          [(ngModel)]="newProduit.nom" name="nom"
+          class="w-full border px-3 py-2 rounded"
+          required
+        />
+        <input
+          type="number" placeholder="Prix"
+          [(ngModel)]="newProduit.prix" name="prix"
+          class="w-full border px-3 py-2 rounded"
+          required
+        />
+        <input type="file" (change)="onFileSelected($event)" class="w-full" />
+        <div *ngIf="imagePreview" class="mt-2">
+          <img [src]="imagePreview" class="w-32 h-32 object-cover rounded shadow" />
+        </div>
+        <button
+          type="submit"
+          class="px-6 py-2 bg-[#0077B6] text-white rounded hover:bg-[#090B0C] transition"
+        >
+          Enregistrer
+        </button>
+      </form>
+    </section>
+
+    <section *ngIf="section==='orders'">
+      <h2 class="text-2xl font-bold mb-4 text-[#090B0C]">Commandes</h2>
+      <table class="min-w-full bg-white rounded shadow overflow-hidden">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-4 py-2 text-left">ID</th>
+            <th class="px-4 py-2 text-left">Date</th>
+            <th class="px-4 py-2 text-left">Statut</th>
+            <th class="px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of commandes" class="border-b">
+            <td class="px-4 py-2 font-mono text-sm">{{ c._id }}</td>
+            <td class="px-4 py-2">{{ c.created_at | date:'short' }}</td>
+            <td class="px-4 py-2">{{ c.status }}</td>
+            <td class="px-4 py-2 space-x-2">
+              <button
+                (click)="updateStatus(c._id, 'valide')"
+                class="px-3 py-1 bg-gray-300 text-[#090B0C] rounded hover:bg-[#0077B6] hover:text-white transition"
+              >
+                Valider
+              </button>
+              <button
+                (click)="updateStatus(c._id, 'en_livraison')"
+                class="px-3 py-1 bg-gray-300 text-[#090B0C] rounded hover:bg-[#0077B6] hover:text-white transition"
+              >
+                Livraison
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+</div>

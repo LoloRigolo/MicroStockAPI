@@ -1,0 +1,81 @@
+<div class="min-h-screen bg-[#F1F4F6]">
+  <div class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+    <div
+      class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center sm:justify-between space-y-3 sm:space-y-0"
+    >
+      <h1 class="text-2xl font-bold text-[#090B0C]">
+        🛒 Liste des marchandises
+      </h1>
+
+
+      <div class="flex space-x-3">
+        <button
+          (click)="goToCommandes()"
+          class="px-4 py-2 bg-[#0077B6] hover:bg-[#090B0C] text-white font-semibold rounded transition"
+        >
+          Voir mes commandes
+        </button>
+        <button
+          routerLink="/panier"
+          class="px-4 py-2 bg-[#F1F4F6] hover:bg-gray-100 text-[#090B0C] font-semibold border-2 border-[#0077B6] rounded transition"
+        >
+          Mon panier
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-6">
+    <h2 class="text-3xl font-bold text-[#090B0C] mb-6">🛍️ Nos produits</h2>
+
+    <div *ngIf="error" class="text-red-600 mb-4">
+      {{ error }}
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div
+        *ngFor="let m of marchandises"
+        class="bg-white rounded-lg shadow p-4 flex flex-col"
+      >
+        <img
+          [src]="m.imageUrl"
+          alt="{{ m.nom }}"
+          class="w-full h-40 object-contain mb-4"
+        />
+
+        <div class="text-center mb-4">
+          <h3 class="text-lg font-semibold text-[#090B0C]">{{ m.nom }}</h3>
+          <p class="text-gray-700">{{ m.prix | currency: 'EUR' }}</p>
+        </div>
+
+        <div class="flex items-center justify-center space-x-3 mb-4">
+
+   <button
+     (click)="decrement(m._id)"
+     class="w-8 h-8 bg-gray-300 hover:bg-gray-400 rounded flex items-center justify-center"
+   >
+     –
+   </button>
+
+   <span class="text-[#090B0C] font-semibold">
+     {{ quantites[m._id] }}
+   </span>
+
+   <button
+     (click)="increment(m._id)"
+     class="w-8 h-8 bg-[#0077B6] hover:bg-[#090B0C] text-white rounded flex items-center justify-center"
+   >
+     +
+   </button>
+ </div>
+
+        <button
+          (click)="addToPanier(m, quantites[m._id])"
+          class="mt-auto w-full py-2 bg-[#0077B6] hover:bg-[#090B0C] text-white font-semibold rounded transition"
+        >
+          Ajouter
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

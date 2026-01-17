@@ -1,0 +1,52 @@
+<div class="max-w-4xl mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6">🧾 Détail de la commande</h1>
+
+  <div *ngIf="error" class="text-red-600 mb-4">
+    {{ error }}
+  </div>
+
+  <div *ngIf="commande">
+    <p class="mb-2">
+      <span class="font-semibold">ID :</span>
+      <span class="font-mono text-gray-700">{{ commande._id }}</span>
+    </p>
+    <p class="mb-2">
+      <span class="font-semibold">Date :</span>
+      {{ commande.created_at | date: 'short' }}
+    </p>
+    <p class="mb-4">
+      <span class="font-semibold">Statut :</span>
+      {{ commande.status }}
+    </p>
+
+    <h2 class="text-xl font-semibold mb-2">Articles</h2>
+
+    <table class="min-w-full bg-white border rounded shadow">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="px-4 py-2 border">Nom</th>
+          <th class="px-4 py-2 border">Prix</th>
+          <th class="px-4 py-2 border">Quantité</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let article of commande.articles">
+          <td class="px-4 py-2 border">{{ article.nom }}</td>
+          <td class="px-4 py-2 border">
+            {{ article.prix | currency: 'EUR' }}
+          </td>
+          <td class="px-4 py-2 border">{{ article.quantite }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-6 flex justify-center">
+    <button
+      class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      (click)="retourCommandes()"
+    >
+      Retour à mes commandes
+    </button>
+  </div>
+</div>

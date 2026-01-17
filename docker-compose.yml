@@ -1,0 +1,104 @@
+services:
+  magasin:
+    container_name: magasin-micro-services
+    build:
+      context: ./backend/magasin
+    volumes:
+      - ./backend/magasin:/usr/src/magasin-app
+    ports:
+      - 3007:3007
+    networks:
+      - microservice
+
+  marchandise:
+    container_name: marchandise-micro-services
+    build:
+      context: ./backend/marchandises
+    volumes:
+      - ./backend/marchandises:/usr/src/marchandise-app
+    ports:
+      - 3012:3012
+    networks:
+      - microservice
+
+  stockage:
+    container_name: stockage-micro-services
+    build:
+      context: ./backend/stockage
+    volumes:
+      - ./backend/stockage:/usr/src/stockage-app
+    ports:
+      - 3013:3013
+    networks:
+      - microservice
+
+  auth:
+    container_name: auth-micro-services
+    build:
+      context: ./backend/auth
+    volumes:
+      - ./backend/auth:/usr/src/auth-app
+    ports:
+      - 3010:3010
+    networks:
+      - microservice
+
+  panier:
+    container_name: panier-micro-services
+    build:
+      context: ./backend/panier
+    volumes:
+      - ./backend/panier:/usr/src/panier-app
+    ports:
+      - 3020:3020
+    networks:
+      - microservice
+
+  commande:
+    container_name: commande-micro-services
+    build:
+      context: ./backend/commande
+    volumes:
+      - ./backend/commande:/usr/src/commande-app
+    ports:
+      - 3021:3021
+    networks:
+      - microservice
+
+  facture:
+    container_name: facture-micro-services
+    build:
+      context: ./backend/facturation
+    volumes:
+      - ./backend/facturation:/usr/src/facture-app
+    ports:
+      - 3022:3022
+    networks:
+      - microservice
+
+  angular:
+    container_name: angular-app
+    build:
+      context: ./frontend
+    ports:
+      - 4200:4200
+    volumes:
+      - ./frontend:/usr/src/app
+    networks:
+      - microservice
+  
+  stockage-images:
+    container_name: stockage-images-micro-services
+    build:
+      context: ./backend/stockage-images
+    volumes:
+      - ./backend/stockage-images/uploads:/usr/src/stockage-images-app/uploads
+    ports:
+      - 3015:3015
+    networks:
+      - microservice
+
+networks:
+  microservice:
+    driver: bridge
+    external: true

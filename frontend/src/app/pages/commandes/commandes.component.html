@@ -1,0 +1,52 @@
+<main class="max-w-5xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-[#090B0C] mb-6">📦 Mes Commandes</h1>
+
+    <div *ngIf="error" class="mb-4 text-red-600">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!error && commandes.length === 0" class="text-gray-500">
+      Vous n'avez pas encore de commandes.
+    </div>
+
+    <div *ngIf="commandes.length > 0" class="overflow-x-auto bg-white shadow rounded-lg border border-gray-200">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-[#0077B6] text-white">
+          <tr>
+            <th class="px-6 py-3 text-left text-sm font-medium uppercase">ID Commande</th>
+            <th class="px-6 py-3 text-left text-sm font-medium uppercase">Date</th>
+            <th class="px-6 py-3 text-left text-sm font-medium uppercase">Statut</th>
+            <th class="px-6 py-3 text-center text-sm font-medium uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let cmd of commandes" class="hover:bg-gray-50">
+            <td class="px-6 py-4 font-mono text-gray-800 text-sm whitespace-pre-wrap break-all">
+              {{ cmd._id }}
+            </td>
+            <td class="px-6 py-4 text-gray-700 text-sm">
+              {{ cmd.created_at | date:'short' }}
+            </td>
+            <td class="px-6 py-4 text-[#090B0C] font-semibold text-sm">
+              {{ cmd.status }}
+            </td>
+            <td class="px-6 py-4 text-center space-x-2">
+              <button
+                (click)="goToDetail(cmd._id)"
+                class="inline-flex items-center px-4 py-2 bg-[#0077B6] hover:bg-[#090B0C] text-white text-sm font-semibold rounded transition"
+              >
+                Voir détail
+              </button>
+
+              <button
+                (click)="downloadFacture(cmd)"
+                class="inline-flex items-center px-4 py-2 bg-gray-300 hover:bg-gray-400 text-[#090B0C] text-sm font-semibold rounded transition"
+              >
+                Télécharger facture
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
